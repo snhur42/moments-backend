@@ -1,17 +1,16 @@
-package com.instacafe.moments.service;
+package com.instacafe.moments.service.photo_session;
 
 import com.instacafe.moments.model.AbstractEntity;
 import com.instacafe.moments.repository.EntityRepository;
-import com.instacafe.moments.service.EntityService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class EntityServiceImpl<T extends AbstractEntity, R extends EntityRepository<T>> implements EntityService<T> {
+public abstract class BusinessServiceImpl<T extends AbstractEntity, R extends EntityRepository<T>> implements BusinessService<T> {
     protected final R repository;
 
-    public EntityServiceImpl(R r) {
+    public BusinessServiceImpl(R r) {
         super();
         this.repository = r;
     }
@@ -22,13 +21,13 @@ public abstract class EntityServiceImpl<T extends AbstractEntity, R extends Enti
     }
 
     @Override
-    public List<T> saveAll(Iterable<T> ts) {
-        return repository.saveAll(ts);
+    public T update(T t) {
+        return repository.save(t);
     }
 
     @Override
-    public T update(T t) {
-        return repository.save(t);
+    public List<T> saveAll(Iterable<T> ts) {
+        return repository.saveAll(ts);
     }
 
     @Override

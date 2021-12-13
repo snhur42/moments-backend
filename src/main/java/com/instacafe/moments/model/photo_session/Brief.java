@@ -5,12 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -28,4 +25,10 @@ public class Brief extends AbstractEntity {
 
     @OneToOne(mappedBy = "brief")
     private PhotoSession photoSession;
+
+    @ElementCollection
+    private List<String> questions;
+
+    @ElementCollection
+    private List<String> answers;
 }

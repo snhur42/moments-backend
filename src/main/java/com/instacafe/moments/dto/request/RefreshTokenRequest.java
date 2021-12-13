@@ -1,11 +1,12 @@
 package com.instacafe.moments.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
 @AllArgsConstructor
 public class RefreshTokenRequest {
     private UUID userId;

@@ -38,11 +38,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
+                .antMatchers("/api/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/admin/**").hasAnyRole(Role.ADMIN.name())
-                .antMatchers("/api/manager/**").hasAnyRole(Role.MANAGER.name())
-                .antMatchers("/api/photographer/**").hasAnyRole(Role.PHOTOGRAPHER.name())
-                .antMatchers("/api/client/**").hasAnyRole(Role.CLIENT.name())
+                .antMatchers("/api/admin/**").permitAll()
+                .antMatchers("/api/manager/**").permitAll()
+                .antMatchers("/api/photographer/**").permitAll()
+                .antMatchers("/api/client/**").permitAll()
+////                .antMatchers("/api/admin/**").hasAnyRole(Role.ADMIN.name())
+////                .antMatchers("/api/manager/**").hasAnyRole(Role.MANAGER.name())
+////                .antMatchers("/api/photographer/**").hasAnyRole(Role.PHOTOGRAPHER.name())
+////                .antMatchers("/api/client/**").hasAnyRole(Role.CLIENT.name())
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

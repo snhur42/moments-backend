@@ -1,9 +1,10 @@
 package com.instacafe.moments.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
 @AllArgsConstructor
 public class AuthenticationResponse {
     private boolean success;
