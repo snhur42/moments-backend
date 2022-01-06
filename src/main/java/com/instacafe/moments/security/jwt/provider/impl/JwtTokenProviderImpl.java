@@ -1,21 +1,16 @@
 package com.instacafe.moments.security.jwt.provider.impl;
 
-import com.instacafe.moments.exception.controller.JwtAuthenticationException;
+import com.instacafe.moments.model.user.AppUser;
 import com.instacafe.moments.security.jwt.provider.JwtTokenProvider;
 import com.instacafe.moments.service.auth.UserDetailsServiceImpl;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebApplication;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +18,7 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
+@Slf4j
 public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
 
     private final UserDetailsServiceImpl userDetailsService;
@@ -46,11 +42,14 @@ public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
 
     @Override
     public String createToken(String userId, String username, String role) {
-        Claims claims = Jwts.claims().setSubject(userId);
-        claims.put("username", username);
-        claims.put("role", role);
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
+
+
+        Claims claims = Jwts.claims().setSubject(username);
+        claims.put("id", userId);
+        claims.put("expiredDate", validity);
+
 
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         Key key = Keys.hmacShaKeyFor(keyBytes);
@@ -65,21 +64,33 @@ public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
 
     @Override
     public boolean validateToken(String token) {
-        try {
-            Jws<Claims> claimsJws = Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(token);
-            return !claimsJws.getBody().getExpiration().before(new Date());
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("JWT token is expired or invalid", HttpStatus.UNAUTHORIZED);
+
+       try {
+                Jws<Claims> claimsJws = Jwts.parserBuilder()
+                        .setSigningKey(secretKey)
+                        .build()
+                        .parseClaimsJws(token);
+                return true;
+        } catch (SignatureException ex) {
+            log.error("Invalid JWT signature - {}", ex.getMessage());
+        } catch (MalformedJwtException ex) {
+            log.error("Invalid JWT token - {}", ex.getMessage());
+        } catch (ExpiredJwtException ex) {
+            log.error("Expired JWT token - {}", ex.getMessage());
+        } catch (UnsupportedJwtException ex) {
+            log.error("Unsupported JWT token - {}", ex.getMessage());
+        } catch (IllegalArgumentException ex) {
+            log.error("JWT claims string is empty - {}", ex.getMessage());
         }
+        return false;
     }
 
     @Override
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+
+        AppUser appUser = this.userDetailsService.loadUserByUsername(getUsername(token));
+
+        return new UsernamePasswordAuthenticationToken(appUser, appUser.getAuthorities(), appUser.getAuthorities());
     }
 
     @Override
@@ -87,7 +98,9 @@ public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
-                .parseClaimsJws(token).getBody().getSubject();
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     @Override

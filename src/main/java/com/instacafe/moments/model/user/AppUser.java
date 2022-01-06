@@ -23,16 +23,11 @@ public abstract class AppUser extends AppUserDetails{
     private String firstName;
     @Column(name = "last_name", nullable = false, columnDefinition = "TEXT")
     private String lastName;
-    @Column(name = "phone", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "phone", nullable = false, unique = true, columnDefinition = "TEXT")
     private String phone;
-    @Email
-    @Column(name = "email", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "email", nullable = false, unique = true, columnDefinition = "TEXT")
     private String email;
     @Enumerated(value = EnumType.STRING)
     @Column(name = "city")
     private City city;
-    @Override
-    public String getUsername() {
-        return getPhone();
-    }
 }

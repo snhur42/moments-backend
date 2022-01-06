@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/client")
+@RequestMapping("api/client/{clientId}")
 public class ClientRestController {
     private final ClientService clientService;
 
@@ -22,13 +22,13 @@ public class ClientRestController {
     }
 //
 //    @GetMapping("photo_sessions")
-//    public ResponseEntity<List<PhotoSession>> getAllPhotoSessions() {
-//        return new ResponseEntity<>(clientService.findAllPhotoSessions(), HttpStatus.OK);
+//    public ResponseEntity<List<PhotoSession>> getAllPhotoSessions(@PathVariable UUID clientId) {
+//        return new ResponseEntity<>(clientService.findAllPhotoSessionsByClientId(clientId), HttpStatus.OK);
 //    }
 //
 //    @GetMapping("photo_sessions/{photoSessionId}")
-//    public ResponseEntity<PhotoSession> getPhotoSessionById(@PathVariable UUID photoSessionId) {
-//        return new ResponseEntity<>(clientService.findPhotoSessionById(photoSessionId), HttpStatus.OK);
+//    public ResponseEntity<PhotoSession> getPhotoSessionById(@PathVariable UUID clientId, @PathVariable UUID photoSessionId) {
+//        return new ResponseEntity<>(clientService.findPhotoSessionById(clientId, photoSessionId), HttpStatus.OK);
 //    }
 //
 //    @PutMapping("photo_sessions")
@@ -37,13 +37,8 @@ public class ClientRestController {
 //    }
 //
 //    @GetMapping("photos")
-//    public ResponseEntity<List<Photo>> getAllPhoto() {
-//        return new ResponseEntity<>(clientService.findAllPhotos(), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("photos/{photoId}")
-//    public ResponseEntity<Photo> getPhotoById(@PathVariable UUID photoId) {
-//        return new ResponseEntity<>(clientService.findPhotoById(photoId), HttpStatus.OK);
+//    public ResponseEntity<List<Photo>> getAllPhoto(@PathVariable UUID clientId) {
+//        return new ResponseEntity<>(clientService.findAllPhotosByClientId(clientId), HttpStatus.OK);
 //    }
 //
 //    @GetMapping("photos/{photoSessionId}")

@@ -14,9 +14,11 @@ public abstract class UserServiceImpl<T extends AppUser, R extends UserRepositor
     protected final PasswordEncoder passwordEncoder;
     protected final R repository;
 
-    public UserServiceImpl(R repository, PasswordEncoder passwordEncoder) {
-        this.repository = repository;
+
+    public UserServiceImpl(PasswordEncoder passwordEncoder,
+                           R repository) {
         this.passwordEncoder = passwordEncoder;
+        this.repository = repository;
     }
 
     @Override
@@ -39,26 +41,47 @@ public abstract class UserServiceImpl<T extends AppUser, R extends UserRepositor
         repository.deleteById(id);
     }
 
-    protected T createUserFromUserDTO(T t, UserDTO userDTO) {
-        t.setFirstName(userDTO.getFirstName());
-        t.setLastName(userDTO.getLastName());
-        t.setEmail(userDTO.getEmail());
-        t.setPhone(userDTO.getPhone());
-        t.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        t.setCity(userDTO.getCity());
-        t.setAccountNonExpired(true);
-        t.setCredentialsNonExpired(true);
-        t.setAccountNonLocked(true);
-        t.setEnabled(true);
-        return t;
+    protected T parseUserFromUserDTO(AppUser appUser, UserDTO userDTO) {
+        appUser.setFirstName(userDTO.getFirstName());
+        appUser.setLastName(userDTO.getLastName());
+        appUser.setEmail(userDTO.getEmail());
+        appUser.setPhone(userDTO.getPhone());
+        appUser.setCity(userDTO.getCity());
+        appUser.setRole(userDTO.getRole());
+        appUser.setAccountNonExpired(true);
+        appUser.setCredentialsNonExpired(true);
+        appUser.setAccountNonLocked(true);
+        appUser.setEnabled(true);
+        return (T) appUser;
     }
 
-    protected T updateUserFromUserDTO(UserDTO userDTO) {
-        T t = repository.getById(UUID.fromString(userDTO.getUserId()));
+    protected T updateUserFromUserDTO(String userId, UserDTO userDTO) {
+        T t = repository.getById(UUID.fromString(userId));
 
         return repository.save(
-                this.createUserFromUserDTO(t, userDTO)
+                this.parseUserFromUserDTO(t, userDTO)
         );
     }
 
+    protected AppUser createUserFromUserDTO(AppUser appUser, UserDTO userDTO) {
+        String username = UUID.randomUUID().toString().substring(0,6);
+        String password = UUID.randomUUID().toString().substring(0,6);
+
+        appUser.setUsername(username);
+        appUser.setPassword(passwordEncoder.encode(password));
+
+        System.out.println("Username: " + username + " password " + password);
+
+        return repository.save(
+                this.parseUserFromUserDTO(appUser, userDTO)
+        );
+    }
+
+    protected <U extends AppUser> U changeUserEnableStatus(U u) {
+        u.setAccountNonExpired(!u.isAccountNonExpired());
+        u.setCredentialsNonExpired(!u.isCredentialsNonExpired());
+        u.setAccountNonLocked(!u.isAccountNonLocked());
+        u.setEnabled(!u.isEnabled());
+        return u;
+    }
 }

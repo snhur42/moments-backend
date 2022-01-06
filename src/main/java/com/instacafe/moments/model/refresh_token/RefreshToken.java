@@ -20,6 +20,7 @@ import java.util.Date;
 @Table(name = "refresh_token",
         uniqueConstraints = {
                 @UniqueConstraint(name = "refresh_token_unique", columnNames = "refresh_token"),
+                @UniqueConstraint(name = "finger_print_unique", columnNames = "finger_print"),
         }
 )
 public class RefreshToken extends AbstractEntity {
@@ -29,6 +30,6 @@ public class RefreshToken extends AbstractEntity {
     private String refreshToken;
     @Column(name = "finger_print", nullable = false, columnDefinition = "TEXT")
     private String fingerPrint;
-    @Column(name = "expires_in", nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(name = "expires_in", nullable = false, unique = true, columnDefinition = "TIMESTAMP")
     private Date expiresIn;
 }

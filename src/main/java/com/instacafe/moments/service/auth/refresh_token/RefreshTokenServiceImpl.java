@@ -37,6 +37,14 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return repository.findById(id).get();
     }
 
+    public RefreshToken findByUserIdAndFingerPrint(String userId, String fingerPrint) {
+        return repository.findByUserIdAndFingerPrint(userId, fingerPrint).get();
+    }
+
+    public List<RefreshToken> findAllByUserId(String userId) {
+        return repository.findAllByUserId(userId);
+    }
+
     @Override
     public List<RefreshToken> findAll() {
         return repository.findAll();

@@ -1,7 +1,8 @@
 package com.instacafe.moments.service.user.impl;
 
 import com.instacafe.moments.dto.UserDTO;
-import com.instacafe.moments.service.photo_session.impl.PhotoService;
+import com.instacafe.moments.repository.photo_session.PhotoRepository;
+import com.instacafe.moments.repository.photo_session.PhotoSessionRepository;
 import com.instacafe.moments.service.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -9,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.instacafe.moments.model.user.roles.Photographer;
 import com.instacafe.moments.repository.user.PhotographerRepository;
-import com.instacafe.moments.service.photo_session.impl.PhotoSessionService;
 
 import javax.transaction.Transactional;
 
@@ -17,30 +17,32 @@ import javax.transaction.Transactional;
 @Transactional
 @Qualifier("photographerService")
 public class PhotographerService extends UserServiceImpl<Photographer, PhotographerRepository> {
-    private final PhotoSessionService photoSessionService;
-    private final PhotoService photoService;
-
+    private final PhotoSessionRepository photoSessionRepository;
+    private final PhotoRepository photoRepository;
 
     @Autowired
     public PhotographerService(PhotographerRepository photographerRepository,
-                               PhotoSessionService photoSessionService,
-                               PhotoService photoService,
-                               PasswordEncoder passwordEncoder) {
-        super(photographerRepository, passwordEncoder);
-        this.photoSessionService = photoSessionService;
-        this.photoService = photoService;
+                         PasswordEncoder passwordEncoder,
+                         PhotoSessionRepository photoSessionRepository,
+                         PhotoRepository photoRepository) {
+        super(passwordEncoder, photographerRepository);
+        this.photoSessionRepository = photoSessionRepository;
+        this.photoRepository = photoRepository;
+
     }
 
     @Override
     public Photographer save(UserDTO userDTO) {
         Photographer photographer = new Photographer();
-        return repository.save(this.createUserFromUserDTO(photographer, userDTO));
+        return repository.save(this.parseUserFromUserDTO(photographer, userDTO));
     }
 
     @Override
-    public Photographer update(UserDTO userDTO) {
-        return this.updateUserFromUserDTO(userDTO);
+    public Photographer update(String photographerId, UserDTO userDTO) {
+        return this.updateUserFromUserDTO(photographerId, userDTO);
     }
+
+
 //
 //    public List<PhotoSession> findAllPhotoSessions() {
 //        return photoSessionService.findAll();

@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @NoRepositoryBean
 public interface UserRepository<T extends AppUser> extends EntityRepository<T> {
-    Optional<T> findByPhone(String phone);
+    Optional<T> findByUsername(String username);
 
 }

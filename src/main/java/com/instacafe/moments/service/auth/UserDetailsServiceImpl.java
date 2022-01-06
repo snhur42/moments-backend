@@ -40,11 +40,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public AppUser loadUserByUsername(String phone) throws UsernameNotFoundException {
-        Optional<Admin> adminOptional = adminRepository.findByPhone(phone);
-        Optional<Manager> managerOptional = managerRepository.findByPhone(phone);
-        Optional<Client> clientOptional = clientRepository.findByPhone(phone);
-        Optional<Photographer> photographerOptional = photographerRepository.findByPhone(phone);
+    public AppUser loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<Admin> adminOptional = adminRepository.findByUsername(username);
+        Optional<Manager> managerOptional = managerRepository.findByUsername(username);
+        Optional<Client> clientOptional = clientRepository.findByUsername(username);
+        Optional<Photographer> photographerOptional = photographerRepository.findByUsername(username);
 
         if(adminOptional.isPresent()){
             return adminOptional.get();
@@ -55,7 +55,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }else if(photographerOptional.isPresent()){
             return photographerOptional.get();
         }else {
-            throw new UserNotFoundException("There is not User with this username/phone: " + phone);
+            throw new UserNotFoundException("There is not User with this username: " + username);
         }
     }
 

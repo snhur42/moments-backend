@@ -34,6 +34,8 @@ public abstract class AppUserDetails extends AbstractEntity implements UserDetai
     private boolean enabled;
     @Column(name = "password", nullable = false, columnDefinition = "TEXT")
     private String password;
+    @Column(name = "username", nullable = false, unique = true, columnDefinition = "TEXT")
+    private String username;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

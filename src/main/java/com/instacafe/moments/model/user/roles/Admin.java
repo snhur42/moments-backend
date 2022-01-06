@@ -10,8 +10,10 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "admin",
         uniqueConstraints = {
                 @UniqueConstraint(name = "admin_email_unique", columnNames = "email"),
-                @UniqueConstraint(name = "admin_phone_unique", columnNames = "phone")
+                @UniqueConstraint(name = "admin_phone_unique", columnNames = "phone"),
+                @UniqueConstraint(name = "admin_username_unique", columnNames = "username"),
         }
 )
 public class Admin extends AppUser {
+
 }

@@ -20,8 +20,6 @@ import java.io.IOException;
 
 @Component
 public class JwtTokenFilter extends GenericFilterBean {
-    @Value("${auth.header.string}")
-    private String authHeader;
 
     private final JwtAccessTokenProvider jwtAccessTokenProvider;
 
@@ -34,8 +32,9 @@ public class JwtTokenFilter extends GenericFilterBean {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         String token = jwtAccessTokenProvider.resolveToken((HttpServletRequest) servletRequest);
         try {
-            if (token != null && jwtAccessTokenProvider.validateToken(token)) {
+            if ( token != null && !token.isEmpty() && jwtAccessTokenProvider.validateToken(token)) {
                 Authentication authentication = jwtAccessTokenProvider.getAuthentication(token);
+
                 if (authentication != null) {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }

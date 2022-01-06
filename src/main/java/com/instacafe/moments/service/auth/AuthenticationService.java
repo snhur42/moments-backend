@@ -1,6 +1,7 @@
 package com.instacafe.moments.service.auth;
 
 import com.instacafe.moments.dto.request.AuthenticationRequest;
+import com.instacafe.moments.dto.request.LogoutRequest;
 import com.instacafe.moments.dto.request.RefreshTokenRequest;
 import com.instacafe.moments.dto.response.AuthenticationResponse;
 import com.instacafe.moments.exception.controller.AuthenticateException;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
@@ -39,21 +41,32 @@ public record AuthenticationService(
     public AuthenticationResponse authenticate(HttpServletResponse response, AuthenticationRequest request) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-            AppUser user = (AppUser) userDetailsService.loadUserByUsername(request.getUsername());
+
+            AppUser user = userDetailsService.loadUserByUsername(request.getUsername());
 
             String accessTokenString = jwtAccessTokenProvider.createToken(user.getId().toString(), request.getUsername(), user.getRole().name());
             String refreshTokenString = jwtRefreshTokenProvider.createToken(user.getId().toString(), request.getUsername(), user.getRole().name());
 
+            long countRefreshToken = refreshTokenServiceImpl.findAll().stream().filter(token -> token.getUserId().equals(user.getId().toString())).count();
+
+            if (countRefreshToken >= 3) {
+                refreshTokenServiceImpl.deleteAllByUserId(user.getId().toString());
+            }
+
             RefreshToken refreshTokenObj = refreshTokenServiceImpl.save(new RefreshToken(
                     user.getId().toString(),
                     refreshTokenString,
-                    request.getFingerprint(),
+                    request.getFingerPrint(),
                     jwtRefreshTokenProvider.getExpiredDate(refreshTokenString)
             ));
 
             setCookieToResponse(response, refreshTokenObj.getId().toString());
 
-            return new AuthenticationResponse(true, user.getId().toString(), accessTokenString);
+            return new AuthenticationResponse(true,
+                    user.getId().toString(),
+                    user.getRole().name(),
+                    accessTokenString,
+                    jwtAccessTokenProvider.getExpiredDate(accessTokenString));
 
         } catch (AuthenticationException e) {
             throw new AuthenticateException("Invalid email/password combination");
@@ -67,7 +80,7 @@ public record AuthenticationService(
             boolean isRefreshTokenValid = jwtRefreshTokenProvider.validateToken(refreshToken.getRefreshToken());
             boolean isRefreshTokenHasTheSameUserId = refreshTokenRequest.getUserId().equals(UUID.fromString(refreshToken.getUserId()));
             boolean isExpired = refreshToken.getExpiresIn().after(new Date());
-            boolean isFingerprintValid = refreshToken.getFingerPrint().equals(refreshTokenRequest.getFingerprint());
+            boolean isFingerprintValid = refreshToken.getFingerPrint().equals(refreshTokenRequest.getFingerPrint());
 
             if (isRefreshTokenValid && isExpired && isFingerprintValid && isRefreshTokenHasTheSameUserId) {
 
@@ -87,23 +100,32 @@ public record AuthenticationService(
                 RefreshToken refreshTokenObj = refreshTokenServiceImpl.save(new RefreshToken(
                         user.getId().toString(),
                         refreshTokenString,
-                        refreshTokenRequest.getFingerprint(),
+                        refreshTokenRequest.getFingerPrint(),
                         jwtRefreshTokenProvider.getExpiredDate(refreshTokenString)
                 ));
 
                 setCookieToResponse(response, refreshTokenObj.getId().toString());
 
-                return new AuthenticationResponse(true, user.getId().toString(), accessTokenString);
+                return new AuthenticationResponse(true, user.getId().toString(), user.getRole().name(), accessTokenString, jwtAccessTokenProvider.getExpiredDate(accessTokenString));
             } else {
                 refreshTokenServiceImpl.delete(refreshToken);
             }
-            return new AuthenticationResponse(false, null, null);
+            return new AuthenticationResponse(false, null, null, null, null);
         } catch (AuthenticationException e) {
             throw new TokenRefreshException("Invalid refreshToken");
         }
     }
 
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
+    public void logout(LogoutRequest logoutRequest, HttpServletResponse response, HttpServletRequest request) {
+//        this.deleteCookie(request);
+
+        refreshTokenServiceImpl.delete(
+                refreshTokenServiceImpl.findByUserIdAndFingerPrint(
+                        logoutRequest.getUserId(),
+                        logoutRequest.getFingerPrint()
+                )
+        );
+
         SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
         securityContextLogoutHandler.logout(request, response, null);
     }
@@ -116,5 +138,18 @@ public record AuthenticationService(
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
+    }
+
+    private void deleteCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+
+        if(cookies.length > 0 ){
+            Arrays.stream(cookies)
+                    .filter(cookie -> cookie.getName().equals("refreshToken"))
+                    .forEach(cookie -> cookie.setMaxAge(0));
+        }
+
+
+
     }
 }

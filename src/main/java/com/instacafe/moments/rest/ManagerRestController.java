@@ -1,5 +1,6 @@
 package com.instacafe.moments.rest;
 
+import com.instacafe.moments.dto.UserDTO;
 import com.instacafe.moments.model.photo_session.Photo;
 import com.instacafe.moments.model.photo_session.PhotoSession;
 import com.instacafe.moments.model.user.roles.Client;
@@ -26,59 +27,57 @@ public class ManagerRestController {
         this.managerService = managerService;
     }
 
-//
-//    @GetMapping("managers/{managerId}")
-//    public ResponseEntity<Manager> getManagerById(@PathVariable UUID managerId) {
-//        return new ResponseEntity<>(managerService.findById(managerId), HttpStatus.OK);
-//    }
-//
-//    @PutMapping("managers")
-//    public ResponseEntity<Manager> updateManager(@RequestBody Manager manager) {
-//        return new ResponseEntity<>(managerService.update(manager), HttpStatus.OK);
-//    }
-//
-//
-//    @GetMapping("photographers")
-//    public ResponseEntity<List<Photographer>> getAllPhotographers() {
-//        return new ResponseEntity<>(managerService.findAllPhotographers(), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("photographers/{photographerId}")
-//    public ResponseEntity<Photographer> getPhotographerById(@PathVariable UUID photographerId) {
-//        return new ResponseEntity<>(managerService.findPhotographerById(photographerId), HttpStatus.OK);
-//    }
-//
-//    @PutMapping("photographers")
-//    public ResponseEntity<Photographer> updatePhotographer(@RequestBody Photographer photographer) {
-//        return new ResponseEntity<>(managerService.updatePhotographer(photographer), HttpStatus.OK);
-//    }
-//
-//
-//    @PostMapping("create_client")
-//    public ResponseEntity<Client> createClient(@RequestBody Client client) {
-//        return new ResponseEntity<>(managerService.saveClient(client), HttpStatus.CREATED);
-//    }
-//
-//    @GetMapping("clients")
-//    public ResponseEntity<List<Client>> getAllClients() {
-//        return new ResponseEntity<>(managerService.findAllClients(), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("clients/{clientId}")
-//    public ResponseEntity<Client> getClientById(@PathVariable UUID clientId) {
-//        return new ResponseEntity<>(managerService.findClientById(clientId), HttpStatus.OK);
-//    }
-//
-//    @PutMapping("clients")
-//    public ResponseEntity<Client> updateClient(@RequestBody Client client) {
-//        return new ResponseEntity<>(managerService.updateClient(client), HttpStatus.OK);
-//    }
-//
-//    @DeleteMapping("clients/{clientId}")
-//    public ResponseEntity<?> deleteClientById(@PathVariable UUID clientId) {
-//        managerService.deleteClientById(clientId);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+
+
+    @GetMapping("photographers")
+    public ResponseEntity<List<Photographer>> getAllPhotographers() {
+        return new ResponseEntity<>(managerService.findAllPhotographers(), HttpStatus.OK);
+    }
+
+    @GetMapping("photographers/{photographerId}")
+    public ResponseEntity<Photographer> getPhotographerById(@PathVariable UUID photographerId) {
+        return new ResponseEntity<>(managerService.findPhotographerById(photographerId), HttpStatus.OK);
+    }
+
+    @PutMapping("photographers/{photographerId}")
+    public ResponseEntity<Photographer> updatePhotographer(@PathVariable String photographerId, @RequestBody UserDTO userDTO) {
+        return new ResponseEntity<>(managerService.updatePhotographer(photographerId, userDTO), HttpStatus.OK);
+    }
+
+    @PutMapping("block_photographer/{photographerId}")
+    public void changePhotographerEnableStatus(@PathVariable String photographerId) {
+        managerService.changePhotographerEnableStatus(photographerId);
+    }
+
+
+
+
+    @PostMapping("create_client")
+    public ResponseEntity<Client> createClient(@RequestBody UserDTO userDTO) {
+        return new ResponseEntity<>(managerService.saveClient(userDTO), HttpStatus.CREATED);
+    }
+
+    @GetMapping("clients")
+    public ResponseEntity<List<Client>> getAllClients() {
+        return new ResponseEntity<>(managerService.findAllClients(), HttpStatus.OK);
+    }
+
+    @GetMapping("clients/{clientId}")
+    public ResponseEntity<Client> getClientById(@PathVariable UUID clientId) {
+        return new ResponseEntity<>(managerService.findClientById(clientId), HttpStatus.OK);
+    }
+
+    @PutMapping("clients/{clientId}")
+    public ResponseEntity<Client> updateClient(@PathVariable String clientId, @RequestBody UserDTO userDTO) {
+        return new ResponseEntity<>(managerService.updateClient(clientId, userDTO), HttpStatus.OK);
+    }
+
+    @PutMapping("block_client/{clientId}")
+    public void changeClientEnableStatus(@PathVariable String clientId) {
+        managerService.changeClientEnableStatus(clientId);
+    }
+
+
 //
 //
 //    @PostMapping("create_photo_session")
