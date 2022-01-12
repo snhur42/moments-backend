@@ -28,11 +28,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public RefreshToken update(RefreshToken refreshToken) {
-        return repository.save(refreshToken);
-    }
-
-    @Override
     public RefreshToken findById(UUID id) {
         return repository.findById(id).get();
     }
@@ -58,6 +53,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public void delete(RefreshToken refreshToken) {
         repository.delete(refreshToken);
+    }
+
+    @Override
+    public void deleteAll() {
+        repository.deleteAll();
     }
 }
 

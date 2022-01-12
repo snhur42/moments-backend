@@ -23,7 +23,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.UUID;
 
 @Service
@@ -44,8 +43,14 @@ public record AuthenticationService(
 
             AppUser user = userDetailsService.loadUserByUsername(request.getUsername());
 
-            String accessTokenString = jwtAccessTokenProvider.createToken(user.getId().toString(), request.getUsername(), user.getRole().name());
-            String refreshTokenString = jwtRefreshTokenProvider.createToken(user.getId().toString(), request.getUsername(), user.getRole().name());
+            String accessTokenString = jwtAccessTokenProvider.createToken(
+                    user.getId().toString(),
+                    user.getRole().toString()
+            );
+            String refreshTokenString = jwtRefreshTokenProvider.createToken(
+                    user.getId().toString(),
+                    user.getRole().toString()
+            );
 
             long countRefreshToken = refreshTokenServiceImpl.findAll().stream().filter(token -> token.getUserId().equals(user.getId().toString())).count();
 
@@ -62,32 +67,28 @@ public record AuthenticationService(
 
             setCookieToResponse(response, refreshTokenObj.getId().toString());
 
-            return new AuthenticationResponse(true,
-                    user.getId().toString(),
-                    user.getRole().name(),
-                    accessTokenString,
-                    jwtAccessTokenProvider.getExpiredDate(accessTokenString));
+            return new AuthenticationResponse(true, accessTokenString);
 
         } catch (AuthenticationException e) {
             throw new AuthenticateException("Invalid email/password combination");
         }
     }
 
-    public AuthenticationResponse refreshToken(HttpServletResponse response, RefreshTokenRequest refreshTokenRequest) {
+    public AuthenticationResponse refreshToken(HttpServletResponse response, RefreshTokenRequest refreshTokenRequest, String refreshTokenId) {
         try {
-            RefreshToken refreshToken = refreshTokenServiceImpl.findById(refreshTokenRequest.getRefreshTokenId());
+            RefreshToken refreshToken = refreshTokenServiceImpl.findById(UUID.fromString(refreshTokenId));
 
             boolean isRefreshTokenValid = jwtRefreshTokenProvider.validateToken(refreshToken.getRefreshToken());
+            boolean isExpired = jwtRefreshTokenProvider.IsExpired(refreshToken.getRefreshToken());
             boolean isRefreshTokenHasTheSameUserId = refreshTokenRequest.getUserId().equals(UUID.fromString(refreshToken.getUserId()));
-            boolean isExpired = refreshToken.getExpiresIn().after(new Date());
             boolean isFingerprintValid = refreshToken.getFingerPrint().equals(refreshTokenRequest.getFingerPrint());
 
             if (isRefreshTokenValid && isExpired && isFingerprintValid && isRefreshTokenHasTheSameUserId) {
 
                 AppUser user = userDetailsService.loadUserByUserId(UUID.fromString(refreshToken.getUserId()));
 
-                String accessTokenString = jwtAccessTokenProvider.createToken(user.getId().toString(), user.getUsername(), user.getRole().name());
-                String refreshTokenString = jwtRefreshTokenProvider.createToken(user.getId().toString(), user.getUsername(), user.getRole().name());
+                String accessTokenString = jwtAccessTokenProvider.createToken(user.getId().toString(), user.getRole().name());
+                String refreshTokenString = jwtRefreshTokenProvider.createToken(user.getId().toString(), user.getRole().name());
 
                 long countRefreshToken = refreshTokenServiceImpl.findAll().stream().filter(token -> token.getUserId().equals(refreshToken.getUserId())).count();
 
@@ -106,28 +107,34 @@ public record AuthenticationService(
 
                 setCookieToResponse(response, refreshTokenObj.getId().toString());
 
-                return new AuthenticationResponse(true, user.getId().toString(), user.getRole().name(), accessTokenString, jwtAccessTokenProvider.getExpiredDate(accessTokenString));
+                System.out.println("Give new refresh token");
+
+                return new AuthenticationResponse(true, accessTokenString);
             } else {
                 refreshTokenServiceImpl.delete(refreshToken);
             }
-            return new AuthenticationResponse(false, null, null, null, null);
+            return new AuthenticationResponse(false, null);
         } catch (AuthenticationException e) {
             throw new TokenRefreshException("Invalid refreshToken");
         }
     }
 
-    public void logout(LogoutRequest logoutRequest, HttpServletResponse response, HttpServletRequest request) {
-//        this.deleteCookie(request);
+    public void logout(LogoutRequest logoutRequest
+//            , HttpServletResponse response, HttpServletRequest request
+    ) {
+        try {
+//            this.deleteCookie(request);
 
-        refreshTokenServiceImpl.delete(
-                refreshTokenServiceImpl.findByUserIdAndFingerPrint(
-                        logoutRequest.getUserId(),
-                        logoutRequest.getFingerPrint()
-                )
-        );
+            refreshTokenServiceImpl.delete(
+                    refreshTokenServiceImpl.findByUserIdAndFingerPrint(
+                            logoutRequest.getUserId(),
+                            logoutRequest.getFingerPrint()
+                    )
+            );
+        }catch (Exception err) {
+            System.out.println(err.getMessage());
+        }
 
-        SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
-        securityContextLogoutHandler.logout(request, response, null);
     }
 
     private void setCookieToResponse(HttpServletResponse response, String userId) {
@@ -148,8 +155,9 @@ public record AuthenticationService(
                     .filter(cookie -> cookie.getName().equals("refreshToken"))
                     .forEach(cookie -> cookie.setMaxAge(0));
         }
+    }
 
-
-
+    public void deleteAllRefreshToken() {
+        refreshTokenServiceImpl.deleteAll();
     }
 }

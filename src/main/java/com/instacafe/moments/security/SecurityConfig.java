@@ -65,10 +65,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/api/auth/login").permitAll()
                 .antMatchers("/api/auth/refresh_token").permitAll()
-                .antMatchers("/api/admin/create_admin").permitAll()
+                .antMatchers("/api/auth/delete_refresh_tokens").permitAll()
                 .antMatchers("/api/auth/logout").hasAnyRole(Role.ADMIN.name(),Role.MANAGER.name(),Role.PHOTOGRAPHER.name(),Role.CLIENT.name())
-//                .antMatchers("/api/auth/refresh_token").permitAll()
-//                .antMatchers("/api/auth/refresh_token").hasAnyRole(Role.ADMIN.name(),Role.MANAGER.name(),Role.PHOTOGRAPHER.name(),Role.CLIENT.name())
                 .antMatchers("/api/auth/logout/**").hasAnyRole(Role.ADMIN.name(),Role.MANAGER.name(),Role.PHOTOGRAPHER.name(),Role.CLIENT.name())
                 .antMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
                 .antMatchers("/api/manager/**").hasRole(Role.MANAGER.name())
@@ -112,17 +110,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
         return new CorsFilter(urlBasedCorsConfigurationSource);
     }
-//
-//    @Bean
-//    public CorsFilter corsFilter() {
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.setAllowCredentials(true);
-//        config.addAllowedOrigin("*");
-//        config.addAllowedHeader("*");
-//        config.addAllowedMethod("*");
-//        source.registerCorsConfiguration("/**", config);
-//        return new CorsFilter(source);
-//    }
+
 
 }

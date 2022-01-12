@@ -16,6 +16,4 @@ public class LogoutRequest {
     private String userId;
     @NotEmpty
     private String fingerPrint;
-
-
 }

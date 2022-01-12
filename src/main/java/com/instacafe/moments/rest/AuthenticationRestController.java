@@ -31,13 +31,26 @@ public class AuthenticationRestController {
     }
 
     @PostMapping("refresh_token")
-    public ResponseEntity<AuthenticationResponse> refreshToken(HttpServletResponse response, HttpServletRequest request, @RequestBody RefreshTokenRequest refreshTokenRequest) {
-        return new ResponseEntity<>(authenticationService.refreshToken(response, refreshTokenRequest), HttpStatus.OK);
+    public ResponseEntity<AuthenticationResponse> refreshToken(@CookieValue(value = "refreshToken") String refreshTokenId,
+                                                               HttpServletResponse response,
+                                                               @RequestBody RefreshTokenRequest refreshTokenRequest) {
+        System.out.println("refresh token " + refreshTokenId );
+        return new ResponseEntity<>(authenticationService.refreshToken(response, refreshTokenRequest, refreshTokenId), HttpStatus.OK);
     }
 
     @PostMapping("logout")
-    public void logout(@RequestBody LogoutRequest logoutRequest, HttpServletResponse response, HttpServletRequest request) {
-        authenticationService.logout(logoutRequest, response, request);
+    public void logout(
+//            HttpServletResponse response, HttpServletRequest request,
+            @RequestBody LogoutRequest logoutRequest) {
+        System.out.println("logout");
+        System.out.println(logoutRequest.getUserId());
+        System.out.println(logoutRequest.getFingerPrint());
+        authenticationService.logout(logoutRequest);
+    }
+
+    @DeleteMapping("delete_refresh_tokens")
+    public void deleteAllRefreshToken() {
+        authenticationService.deleteAllRefreshToken();
     }
 
 }

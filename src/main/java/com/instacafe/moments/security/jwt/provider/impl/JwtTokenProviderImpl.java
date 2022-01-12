@@ -4,9 +4,10 @@ import com.instacafe.moments.model.user.AppUser;
 import com.instacafe.moments.security.jwt.provider.JwtTokenProvider;
 import com.instacafe.moments.service.auth.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
+
+
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,15 +18,16 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.UUID;
 
 @Slf4j
 public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
 
     private final UserDetailsServiceImpl userDetailsService;
     @Value("${auth.header}")
-    private String authorizationHeader;
-    private String secretKey;
-    private final long validityInMilliseconds;
+    protected String authorizationHeader;
+    protected String secretKey;
+    protected final long validityInMilliseconds;
 
     public JwtTokenProviderImpl(UserDetailsServiceImpl userDetailsService,
                                 String secretKey,
@@ -41,14 +43,12 @@ public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
     }
 
     @Override
-    public String createToken(String userId, String username, String role) {
+    public String createToken(String userId, String role) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
-
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("id", userId);
-        claims.put("expiredDate", validity);
+        Claims claims = Jwts.claims().setSubject(userId);
+        claims.put("role", role);
 
 
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
@@ -64,7 +64,6 @@ public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
 
     @Override
     public boolean validateToken(String token) {
-
        try {
                 Jws<Claims> claimsJws = Jwts.parserBuilder()
                         .setSigningKey(secretKey)
@@ -87,14 +86,13 @@ public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
 
     @Override
     public Authentication getAuthentication(String token) {
-
-        AppUser appUser = this.userDetailsService.loadUserByUsername(getUsername(token));
+        AppUser appUser = this.userDetailsService.loadUserByUserId(UUID.fromString(getSubject(token)));
 
         return new UsernamePasswordAuthenticationToken(appUser, appUser.getAuthorities(), appUser.getAuthorities());
     }
 
     @Override
-    public String getUsername(String token) {
+    public String getSubject(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
@@ -108,7 +106,17 @@ public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
-                .parseClaimsJws(token).getBody().getExpiration();
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+    }
+
+    @Override
+    public boolean IsExpired(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token).getBody().getExpiration().before(new Date());
     }
 
     @Override

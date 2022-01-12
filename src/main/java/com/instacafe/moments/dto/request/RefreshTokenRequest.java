@@ -10,6 +10,5 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RefreshTokenRequest {
     private UUID userId;
-    private UUID refreshTokenId;
     private String fingerPrint;
 }
