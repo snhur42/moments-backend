@@ -10,6 +10,7 @@ import com.instacafe.moments.repository.user.AdminRepository;
 import com.instacafe.moments.repository.user.ClientRepository;
 import com.instacafe.moments.repository.user.ManagerRepository;
 import com.instacafe.moments.repository.user.PhotographerRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @Qualifier("userDetailsServiceImpl")
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -41,10 +43,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public AppUser loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Admin> adminOptional = adminRepository.findByUsername(username);
-        Optional<Manager> managerOptional = managerRepository.findByUsername(username);
-        Optional<Client> clientOptional = clientRepository.findByUsername(username);
-        Optional<Photographer> photographerOptional = photographerRepository.findByUsername(username);
+        Optional<Admin> adminOptional = adminRepository.findByEmail(username);
+        Optional<Manager> managerOptional = managerRepository.findByEmail(username);
+        Optional<Client> clientOptional = clientRepository.findByEmail(username);
+        Optional<Photographer> photographerOptional = photographerRepository.findByEmail(username);
 
         if(adminOptional.isPresent()){
             return adminOptional.get();
@@ -55,6 +57,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }else if(photographerOptional.isPresent()){
             return photographerOptional.get();
         }else {
+            log.error("There is not User with this username: " + username);
             throw new UserNotFoundException("There is not User with this username: " + username);
         }
     }
@@ -74,6 +77,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }else if(photographerOptional.isPresent()){
             return photographerOptional.get();
         }else {
+            log.error("There is not User with this id: " + id);
             throw new UserNotFoundException("There is not User with this id: " + id);
         }
     }

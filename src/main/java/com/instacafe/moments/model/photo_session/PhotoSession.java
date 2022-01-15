@@ -26,6 +26,13 @@ import java.util.List;
 @Entity(name = "PhotoSession")
 @Table(name = "photo_session")
 public class PhotoSession extends AbstractEntity {
+    @Column(name = "link_to_all_photos", unique = true, columnDefinition = "TEXT")
+    private String linkToAllPhotos;
+
+    @Column(name = "link_to_final_photos", unique = true, columnDefinition = "TEXT")
+    private String linkToFinalPhotos;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "manager_id",
@@ -55,16 +62,6 @@ public class PhotoSession extends AbstractEntity {
             )
     )
     private Client client;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "photos_id",
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(
-                    name = "photos_id_fk"
-            )
-    )
-    private List<Photo> photos;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(

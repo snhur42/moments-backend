@@ -64,13 +64,11 @@ public abstract class UserServiceImpl<T extends AppUser, R extends UserRepositor
     }
 
     protected AppUser createUserFromUserDTO(AppUser appUser, UserDTO userDTO) {
-        String username = UUID.randomUUID().toString().substring(0,6);
         String password = UUID.randomUUID().toString().substring(0,6);
 
-        appUser.setUsername(username);
         appUser.setPassword(passwordEncoder.encode(password));
 
-        System.out.println("Username: " + username + " password " + password);
+        System.out.println("Password " + password);
 
         return repository.save(
                 this.parseUserFromUserDTO(appUser, userDTO)

@@ -16,9 +16,7 @@ import java.util.List;
 @Table(name = "photographer",
         uniqueConstraints = {
                 @UniqueConstraint(name = "photographer_email_unique", columnNames = "email"),
-                @UniqueConstraint(name = "photographer_phone_unique", columnNames = "phone"),
-                @UniqueConstraint(name = "photographer_username_unique", columnNames = "username"),
-
+                @UniqueConstraint(name = "photographer_phone_unique", columnNames = "phone")
         }
 )
 public class Photographer extends AppUser {

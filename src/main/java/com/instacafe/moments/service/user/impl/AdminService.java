@@ -2,14 +2,12 @@ package com.instacafe.moments.service.user.impl;
 
 import com.instacafe.moments.dto.UserDTO;
 import com.instacafe.moments.model.photo_session.Certificate;
-import com.instacafe.moments.model.photo_session.Photo;
 import com.instacafe.moments.model.photo_session.PhotoSession;
 import com.instacafe.moments.model.user.roles.Admin;
 import com.instacafe.moments.model.user.roles.Client;
 import com.instacafe.moments.model.user.roles.Manager;
 import com.instacafe.moments.model.user.roles.Photographer;
 import com.instacafe.moments.repository.photo_session.CertificateRepository;
-import com.instacafe.moments.repository.photo_session.PhotoRepository;
 import com.instacafe.moments.repository.photo_session.PhotoSessionRepository;
 import com.instacafe.moments.repository.user.AdminRepository;
 import com.instacafe.moments.repository.user.ClientRepository;
@@ -36,7 +34,6 @@ public class AdminService extends UserServiceImpl<Admin, AdminRepository> {
     private final PhotographerService photographerService;
     private final PhotographerRepository photographerRepository;
     private final PhotoSessionRepository photoSessionRepository;
-    private final PhotoRepository photoRepository;
     private final CertificateRepository certificateRepository;
 
     @Autowired
@@ -46,7 +43,6 @@ public class AdminService extends UserServiceImpl<Admin, AdminRepository> {
                         PhotographerRepository photographerRepository,
                         ClientRepository clientRepository,
                         PhotoSessionRepository photoSessionRepository,
-                        PhotoRepository photoRepository,
                         CertificateRepository certificateRepository,
                         @Qualifier("clientService")ClientService clientService,
                         @Qualifier("photographerService")PhotographerService photographerService,
@@ -59,7 +55,6 @@ public class AdminService extends UserServiceImpl<Admin, AdminRepository> {
         this.photographerService = photographerService;
         this.clientRepository = clientRepository;
         this.photoSessionRepository = photoSessionRepository;
-        this.photoRepository = photoRepository;
         this.certificateRepository = certificateRepository;
     }
 
@@ -161,17 +156,6 @@ public class AdminService extends UserServiceImpl<Admin, AdminRepository> {
     public List<PhotoSession> findAllPhotoSessionsByClientId(UUID clientId) {
         return this.findClientById(clientId).getPhotoSessions();
     }
-
-
-    public List<Photo> findAllPhotos() {
-        return photoRepository.findAll();
-    }
-
-    public List<Photo> findAllPhotosByPhotoSessionsId(UUID photoSessionId) {
-        return photoSessionRepository.findById(photoSessionId).get().getPhotos();
-    }
-
-
 
     public List<Certificate> getAllCertificate() {
         return certificateRepository.findAll();

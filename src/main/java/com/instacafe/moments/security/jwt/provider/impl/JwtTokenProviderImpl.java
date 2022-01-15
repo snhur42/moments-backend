@@ -26,6 +26,8 @@ public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
     private final UserDetailsServiceImpl userDetailsService;
     @Value("${auth.header}")
     protected String authorizationHeader;
+    @Value("${auth.header.prefix}")
+    protected String authorizationHeaderPrefix;
     protected String secretKey;
     protected final long validityInMilliseconds;
 
@@ -70,8 +72,6 @@ public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
                         .build()
                         .parseClaimsJws(token);
                 return true;
-        } catch (SignatureException ex) {
-            log.error("Invalid JWT signature - {}", ex.getMessage());
         } catch (MalformedJwtException ex) {
             log.error("Invalid JWT token - {}", ex.getMessage());
         } catch (ExpiredJwtException ex) {
@@ -121,6 +121,10 @@ public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
 
     @Override
     public String resolveToken(HttpServletRequest request) {
-        return request.getHeader(authorizationHeader);
+        String headerValue = request.getHeader(authorizationHeader);
+        if (headerValue != null && headerValue.startsWith(authorizationHeaderPrefix)) {
+            return headerValue.substring(authorizationHeaderPrefix.length());
+        }
+        return null;
     }
 }

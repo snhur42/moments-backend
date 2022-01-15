@@ -56,7 +56,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint(
                         (request, response, ex) -> {
-//                            logger.error("Unauthorized request - {}", ex.getMessage());
                             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
                         }
                 )
@@ -64,10 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/api/auth/login").permitAll()
-                .antMatchers("/api/auth/refresh_token").permitAll()
-                .antMatchers("/api/auth/delete_refresh_tokens").permitAll()
                 .antMatchers("/api/auth/logout").hasAnyRole(Role.ADMIN.name(),Role.MANAGER.name(),Role.PHOTOGRAPHER.name(),Role.CLIENT.name())
-                .antMatchers("/api/auth/logout/**").hasAnyRole(Role.ADMIN.name(),Role.MANAGER.name(),Role.PHOTOGRAPHER.name(),Role.CLIENT.name())
                 .antMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
                 .antMatchers("/api/manager/**").hasRole(Role.MANAGER.name())
                 .antMatchers("/api/photographer/**").hasRole(Role.PHOTOGRAPHER.name())

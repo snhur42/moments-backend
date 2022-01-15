@@ -1,9 +1,6 @@
 package com.instacafe.moments.rest;
 
 import com.instacafe.moments.dto.UserDTO;
-import com.instacafe.moments.model.photo_session.Certificate;
-import com.instacafe.moments.model.photo_session.Photo;
-import com.instacafe.moments.model.photo_session.PhotoSession;
 import com.instacafe.moments.model.user.roles.Admin;
 import com.instacafe.moments.model.user.roles.Client;
 import com.instacafe.moments.model.user.roles.Manager;

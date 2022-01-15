@@ -30,4 +30,10 @@ public abstract class AppUser extends AppUserDetails{
     @Enumerated(value = EnumType.STRING)
     @Column(name = "city")
     private City city;
+
+
+    @Override
+    public String getUsername() {
+        return getEmail();
+    }
 }

@@ -1,7 +1,6 @@
 package com.instacafe.moments.service.user.impl;
 
 import com.instacafe.moments.dto.UserDTO;
-import com.instacafe.moments.repository.photo_session.PhotoRepository;
 import com.instacafe.moments.repository.photo_session.PhotoSessionRepository;
 import com.instacafe.moments.service.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +17,13 @@ import javax.transaction.Transactional;
 @Qualifier("photographerService")
 public class PhotographerService extends UserServiceImpl<Photographer, PhotographerRepository> {
     private final PhotoSessionRepository photoSessionRepository;
-    private final PhotoRepository photoRepository;
 
     @Autowired
     public PhotographerService(PhotographerRepository photographerRepository,
                          PasswordEncoder passwordEncoder,
-                         PhotoSessionRepository photoSessionRepository,
-                         PhotoRepository photoRepository) {
+                         PhotoSessionRepository photoSessionRepository) {
         super(passwordEncoder, photographerRepository);
         this.photoSessionRepository = photoSessionRepository;
-        this.photoRepository = photoRepository;
 
     }
 

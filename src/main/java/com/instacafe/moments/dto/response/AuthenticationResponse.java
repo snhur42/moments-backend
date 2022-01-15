@@ -8,6 +8,7 @@ import java.util.Date;
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class AuthenticationResponse {
     private boolean success;
     private String accessToken;

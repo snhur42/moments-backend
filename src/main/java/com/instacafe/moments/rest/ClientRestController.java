@@ -1,15 +1,8 @@
 package com.instacafe.moments.rest;
 
-import com.instacafe.moments.model.photo_session.Photo;
-import com.instacafe.moments.model.photo_session.PhotoSession;
 import com.instacafe.moments.service.user.impl.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("api/client/{clientId}")
