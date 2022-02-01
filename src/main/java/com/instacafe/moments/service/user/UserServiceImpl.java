@@ -1,8 +1,10 @@
 package com.instacafe.moments.service.user;
 
+import com.instacafe.moments.dto.ClientDTO;
 import com.instacafe.moments.dto.UserDTO;
 import com.instacafe.moments.exception.model.UserNotFoundException;
 import com.instacafe.moments.model.user.AppUser;
+import com.instacafe.moments.model.user.roles.Client;
 import com.instacafe.moments.repository.user.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

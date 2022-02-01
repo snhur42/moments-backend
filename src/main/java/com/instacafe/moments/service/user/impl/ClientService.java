@@ -1,5 +1,6 @@
 package com.instacafe.moments.service.user.impl;
 
+import com.instacafe.moments.dto.ClientDTO;
 import com.instacafe.moments.dto.UserDTO;
 import com.instacafe.moments.repository.photo_session.PhotoSessionRepository;
 import com.instacafe.moments.service.user.UserServiceImpl;
@@ -28,10 +29,27 @@ public class ClientService extends UserServiceImpl<Client, ClientRepository> {
 
     }
 
+    private Client saveClient(ClientDTO clientDTO) {
+        Client client = new Client();
+
+        client.setFirstName(clientDTO.getFirstName());
+        client.setLastName(clientDTO.getLastName());
+        client.setEmail(clientDTO.getEmail());
+        client.setPhone(clientDTO.getPhone());
+        client.setPassword(passwordEncoder.encode(clientDTO.getPassword()));
+        client.setCity(clientDTO.getCity());
+        client.setRole(clientDTO.getRole());
+        client.setAccountNonExpired(true);
+        client.setCredentialsNonExpired(true);
+        client.setAccountNonLocked(true);
+        client.setEnabled(true);
+
+        return repository.save(client);
+    }
+
     @Override
     public Client save(UserDTO userDTO) {
-        Client client = new Client();
-        return repository.save(this.parseUserFromUserDTO(client, userDTO));
+        return this.saveClient((ClientDTO) userDTO);
     }
 
     @Override
