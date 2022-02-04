@@ -116,7 +116,7 @@ public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
-                .parseClaimsJws(token).getBody().getExpiration().before(new Date());
+                .parseClaimsJws(token).getBody().getExpiration().after(new Date());
     }
 
     @Override
