@@ -2,8 +2,9 @@ package com.instacafe.moments.security;
 
 import com.instacafe.moments.model.enums.Role;
 import com.instacafe.moments.security.jwt.JwtTokenFilter;
-import com.instacafe.moments.service.auth.UserDetailsServiceImpl;
+import com.instacafe.moments.service.user.impl.AppUserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,12 +34,12 @@ import java.util.Arrays;
 )
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenFilter jwtTokenFilter;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final AppUserDetailsServiceImpl appUserDetailsService;
 
     @Autowired
-    public SecurityConfig(JwtTokenFilter jwtTokenFilter, UserDetailsServiceImpl userDetailsService) {
+    public SecurityConfig(JwtTokenFilter jwtTokenFilter, @Qualifier("appUserDetailsServiceImpl") AppUserDetailsServiceImpl appUserDetailsService) {
         this.jwtTokenFilter = jwtTokenFilter;
-        this.userDetailsService = userDetailsService;
+        this.appUserDetailsService = appUserDetailsService;
     }
 
     @Override
@@ -61,7 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/admin/create_admin").permitAll()
+                .antMatchers("/api/admin/create_user").permitAll()
 //                .antMatchers("/api/admin/create_brief_questions").permitAll()
 //                .antMatchers("/api/admin/update_brief_questions").permitAll()
                 .antMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
@@ -75,7 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService)
+        auth.userDetailsService(appUserDetailsService)
                 .passwordEncoder(bCryptPasswordEncoder());
     }
 

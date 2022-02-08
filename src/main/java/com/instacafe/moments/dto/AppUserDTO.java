@@ -12,7 +12,7 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class UserDTO {
+public class AppUserDTO {
     @NotEmpty
     private String firstName;
     @NotEmpty
@@ -26,4 +26,6 @@ public class UserDTO {
     private City city;
     @NotEmpty
     private Role role;
+    @NotEmpty
+    private String password;
 }

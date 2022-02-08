@@ -8,6 +8,8 @@ import com.instacafe.moments.model.user.AppUser;
 import com.instacafe.moments.security.jwt.provider.impl.JwtAccessTokenProvider;
 import com.instacafe.moments.security.jwt.provider.impl.JwtRefreshTokenProvider;
 import com.instacafe.moments.service.auth.refresh_token.RefreshTokenServiceImpl;
+import com.instacafe.moments.service.user.impl.AppUserDetailsServiceImpl;
+import com.instacafe.moments.service.user.impl.AppUserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,31 +30,22 @@ import java.util.UUID;
 @Slf4j
 @Service
 @Qualifier("authenticationService")
-public class AuthenticationService {
-    private final AuthenticationManager authenticationManager;
-    private final UserDetailsServiceImpl userDetailsService;
-    private final RefreshTokenServiceImpl refreshTokenServiceImpl;
-    private final JwtAccessTokenProvider jwtAccessTokenProvider;
-    private final JwtRefreshTokenProvider jwtRefreshTokenProvider;
-
+public record AuthenticationService(
+        AuthenticationManager authenticationManager,
+        AppUserDetailsServiceImpl appUserDetailsService,
+        AppUserServiceImpl appUserService,
+        RefreshTokenServiceImpl refreshTokenServiceImpl,
+        JwtAccessTokenProvider jwtAccessTokenProvider,
+        JwtRefreshTokenProvider jwtRefreshTokenProvider) {
     @Autowired
-    public AuthenticationService(AuthenticationManager authenticationManager,
-                                 UserDetailsServiceImpl userDetailsService,
-                                 RefreshTokenServiceImpl refreshTokenServiceImpl,
-                                 JwtAccessTokenProvider jwtAccessTokenProvider,
-                                 JwtRefreshTokenProvider jwtRefreshTokenProvider) {
-        this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService;
-        this.refreshTokenServiceImpl = refreshTokenServiceImpl;
-        this.jwtAccessTokenProvider = jwtAccessTokenProvider;
-        this.jwtRefreshTokenProvider = jwtRefreshTokenProvider;
+    public AuthenticationService {
     }
 
     public ResponseEntity<AuthenticationResponse> authenticate(HttpServletResponse response, AuthenticationRequest request) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-            AppUser user = userDetailsService.loadUserByUsername(request.getEmail());
+            AppUser user = appUserDetailsService.loadUserByUsername(request.getEmail());
 
             String accessTokenString = jwtAccessTokenProvider.createToken(
                     user.getId().toString(),
@@ -103,7 +96,7 @@ public class AuthenticationService {
             RefreshToken refreshToken = refreshTokenServiceImpl.findById(UUID.fromString(refreshTokenId));
 
             if (jwtRefreshTokenProvider.IsExpired(refreshToken.getRefreshToken())) {
-                AppUser user = userDetailsService.loadUserByUserId(UUID.fromString(refreshToken.getUserId()));
+                AppUser user = appUserService.findById(refreshToken.getUserId());
 
                 String accessTokenString = jwtAccessTokenProvider.createToken(
                         user.getId().toString(),

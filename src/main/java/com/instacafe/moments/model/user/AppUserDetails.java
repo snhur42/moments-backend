@@ -22,15 +22,15 @@ import java.util.Collection;
 @MappedSuperclass
 public abstract class AppUserDetails extends AbstractEntity implements UserDetails {
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "role")
+    @Column(name = "role", nullable = false)
     private Role role;
-    @Column(name = "account_non_expired", columnDefinition = "BOOLEAN default TRUE")
+    @Column(name = "account_non_expired", columnDefinition = "BOOLEAN default TRUE", nullable = false)
     private boolean accountNonExpired;
-    @Column(name = "account_non_locked", columnDefinition = "BOOLEAN default TRUE")
+    @Column(name = "account_non_locked", columnDefinition = "BOOLEAN default TRUE", nullable = false)
     private boolean accountNonLocked;
-    @Column(name = "credentials_non_expired", columnDefinition = "BOOLEAN default TRUE")
+    @Column(name = "credentials_non_expired", columnDefinition = "BOOLEAN default TRUE", nullable = false)
     private boolean credentialsNonExpired;
-    @Column(name = "enabled", columnDefinition = "BOOLEAN default TRUE")
+    @Column(name = "enabled", columnDefinition = "BOOLEAN default TRUE", nullable = false)
     private boolean enabled;
     @Column(name = "password", nullable = false, columnDefinition = "TEXT")
     private String password;

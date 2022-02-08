@@ -5,9 +5,9 @@ import com.instacafe.moments.dto.ClientDTO;
 import com.instacafe.moments.dto.request.AuthenticationRequest;
 import com.instacafe.moments.dto.request.LogoutRequest;
 import com.instacafe.moments.dto.response.AuthenticationResponse;
-import com.instacafe.moments.model.user.roles.Client;
+import com.instacafe.moments.model.user.AppUser;
 import com.instacafe.moments.service.auth.AuthenticationService;
-import com.instacafe.moments.service.user.impl.ClientService;
+import com.instacafe.moments.service.user.impl.AppUserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +21,13 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationRestController {
+    private final AppUserServiceImpl appUserService;
 
     private final AuthenticationService authenticationService;
-    private final ClientService clientService;
 
-    public AuthenticationRestController(AuthenticationService authenticationService, ClientService clientService) {
+    public AuthenticationRestController(AuthenticationService authenticationService, AppUserServiceImpl appUserService) {
         this.authenticationService = authenticationService;
-        this.clientService = clientService;
+        this.appUserService = appUserService;
     }
 
     @PostMapping("login")
@@ -50,7 +50,7 @@ public class AuthenticationRestController {
 
 
     @PostMapping("create_client")
-    public ResponseEntity<Client> createManager(@RequestBody ClientDTO clientDTO) {
-        return new ResponseEntity<>(clientService.save(clientDTO), HttpStatus.CREATED);
+    public ResponseEntity<AppUser> createClient(@RequestBody ClientDTO clientDTO) {
+        return new ResponseEntity<>(appUserService.save(clientDTO), HttpStatus.CREATED);
     }
 }

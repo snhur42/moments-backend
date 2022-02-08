@@ -9,9 +9,7 @@ import com.instacafe.moments.model.enums.PhotoSessionType;
 import com.instacafe.moments.model.photo_session.brief.Brief;
 import com.instacafe.moments.model.photo_session.certificate.Certificate;
 import com.instacafe.moments.model.photo_session.chat.Chat;
-import com.instacafe.moments.model.user.roles.Client;
-import com.instacafe.moments.model.user.roles.Manager;
-import com.instacafe.moments.model.user.roles.Photographer;
+import com.instacafe.moments.model.user.AppUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,7 +35,7 @@ public class PhotoSession extends AbstractEntity {
                     name = "manager_id_fk"
             )
     )
-    private Manager manager;
+    private AppUser manager;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -47,7 +45,7 @@ public class PhotoSession extends AbstractEntity {
                     name = "photographer_id_fk"
             )
     )
-    private Photographer photographer;
+    private AppUser photographer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -57,7 +55,7 @@ public class PhotoSession extends AbstractEntity {
                     name = "client_id_fk"
             )
     )
-    private Client client;
+    private AppUser client;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(

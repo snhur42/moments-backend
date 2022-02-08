@@ -2,7 +2,7 @@ package com.instacafe.moments.security.jwt.provider.impl;
 
 import com.instacafe.moments.model.user.AppUser;
 import com.instacafe.moments.security.jwt.provider.JwtTokenProvider;
-import com.instacafe.moments.service.auth.UserDetailsServiceImpl;
+import com.instacafe.moments.service.user.impl.AppUserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -16,23 +16,22 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.UUID;
 
 @Slf4j
 public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
 
     protected final long validityInMilliseconds;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final AppUserDetailsServiceImpl appUserDetailsService;
     @Value("${auth.header}")
     protected String authorizationHeader;
     @Value("${auth.header.prefix}")
     protected String authorizationHeaderPrefix;
     protected String secretKey;
 
-    public JwtTokenProviderImpl(UserDetailsServiceImpl userDetailsService,
+    public JwtTokenProviderImpl(AppUserDetailsServiceImpl appUserDetailsService,
                                 String secretKey,
                                 long validityInMilliseconds) {
-        this.userDetailsService = userDetailsService;
+        this.appUserDetailsService = appUserDetailsService;
         this.secretKey = secretKey;
         this.validityInMilliseconds = validityInMilliseconds;
     }
@@ -84,7 +83,7 @@ public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
 
     @Override
     public Authentication getAuthentication(String token) {
-        AppUser appUser = this.userDetailsService.loadUserByUserId(UUID.fromString(getSubject(token)));
+        AppUser appUser = this.appUserDetailsService.loadUserById(getSubject(token));
 
         return new UsernamePasswordAuthenticationToken(appUser, appUser.getAuthorities(), appUser.getAuthorities());
     }

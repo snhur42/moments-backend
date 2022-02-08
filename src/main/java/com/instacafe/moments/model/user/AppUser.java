@@ -6,18 +6,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@MappedSuperclass
-public abstract class AppUser extends AppUserDetails {
+@Entity(name = "AppUser")
+@Table(name = "app_user",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "user_email_unique", columnNames = "email"),
+                @UniqueConstraint(name = "user_phone_unique", columnNames = "phone")
+        }
+)
+public class AppUser extends AppUserDetails {
     @Column(name = "first_name", nullable = false, columnDefinition = "TEXT")
     private String firstName;
     @Column(name = "last_name", nullable = false, columnDefinition = "TEXT")
@@ -27,7 +30,7 @@ public abstract class AppUser extends AppUserDetails {
     @Column(name = "email", nullable = false, unique = true, columnDefinition = "TEXT")
     private String email;
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "city")
+    @Column(name = "city", nullable = false)
     private City city;
 
 

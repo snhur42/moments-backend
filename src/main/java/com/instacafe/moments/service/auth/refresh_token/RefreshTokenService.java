@@ -17,5 +17,4 @@ public interface RefreshTokenService {
 
     void delete(RefreshToken refreshToken);
 
-    void deleteAll();
 }

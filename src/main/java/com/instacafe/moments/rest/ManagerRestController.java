@@ -1,38 +1,38 @@
 package com.instacafe.moments.rest;
 
-import com.instacafe.moments.dto.CertificateNumberDTO;
+import com.instacafe.moments.dto.AppUserDTO;
 import com.instacafe.moments.dto.PhotoSessionDTO;
-import com.instacafe.moments.dto.UserDTO;
+import com.instacafe.moments.model.enums.Role;
 import com.instacafe.moments.model.photo_session.PhotoSession;
 import com.instacafe.moments.model.photo_session.certificate.Certificate;
-import com.instacafe.moments.model.user.roles.Admin;
-import com.instacafe.moments.model.user.roles.Client;
-import com.instacafe.moments.model.user.roles.Manager;
-import com.instacafe.moments.model.user.roles.Photographer;
+import com.instacafe.moments.model.user.AppUser;
+import com.instacafe.moments.service.user.impl.AppUserServiceImpl;
 import com.instacafe.moments.service.user.impl.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 
 @RestController
 @RequestMapping("api/manager")
 public class ManagerRestController {
     private final ManagerService managerService;
+    private final AppUserServiceImpl appUserService;
 
     @Autowired
-    public ManagerRestController(ManagerService managerService) {
+    public ManagerRestController(@Qualifier("managerService") ManagerService managerService,
+                                 @Qualifier("appUserServiceImpl") AppUserServiceImpl appUserService) {
         this.managerService = managerService;
+        this.appUserService = appUserService;
     }
 
     @GetMapping("managers/{managerId}")
-    public ResponseEntity<Manager> getAdminById(@PathVariable String managerId) {
-        return new ResponseEntity<>(managerService.findById(UUID.fromString(managerId)), HttpStatus.OK);
+    public ResponseEntity<AppUser> getAdminById(@PathVariable String managerId) {
+        return new ResponseEntity<>(appUserService.findById(managerId), HttpStatus.OK);
     }
 
     @GetMapping("get_all_certificates")
@@ -52,52 +52,44 @@ public class ManagerRestController {
 
 
     @GetMapping("photographers")
-    public ResponseEntity<List<Photographer>> getAllPhotographers() {
-        return new ResponseEntity<>(managerService.findAllPhotographers(), HttpStatus.OK);
+    public ResponseEntity<List<AppUser>> getAllPhotographers() {
+        return new ResponseEntity<>(appUserService.findAllByRole(Role.PHOTOGRAPHER), HttpStatus.OK);
     }
 
     @GetMapping("photographers/{photographerId}")
-    public ResponseEntity<Photographer> getPhotographerById(@PathVariable UUID photographerId) {
-        return new ResponseEntity<>(managerService.findPhotographerById(photographerId), HttpStatus.OK);
+    public ResponseEntity<AppUser> getPhotographerById(@PathVariable String photographerId) {
+        return new ResponseEntity<>(appUserService.findByIdAndRole(photographerId, Role.PHOTOGRAPHER), HttpStatus.OK);
     }
 
     @PutMapping("photographers/{photographerId}")
-    public ResponseEntity<Photographer> updatePhotographer(@PathVariable String photographerId, @RequestBody UserDTO userDTO) {
-        return new ResponseEntity<>(managerService.updatePhotographer(photographerId, userDTO), HttpStatus.OK);
+    public ResponseEntity<AppUser> updatePhotographer(@PathVariable String photographerId, @RequestBody AppUserDTO userDTO) {
+        return new ResponseEntity<>(appUserService.update(photographerId, userDTO), HttpStatus.OK);
     }
 
     @PutMapping("block_photographer/{photographerId}")
     public void changePhotographerEnableStatus(@PathVariable String photographerId) {
-        managerService.changePhotographerEnableStatus(photographerId);
-    }
-
-
-    @PostMapping("create_client")
-    public ResponseEntity<Client> createClient(@RequestBody UserDTO userDTO) {
-        return new ResponseEntity<>(managerService.saveClient(userDTO), HttpStatus.CREATED);
+        appUserService.changeUserEnableStatus(photographerId);
     }
 
     @GetMapping("clients")
-    public ResponseEntity<List<Client>> getAllClients() {
-        return new ResponseEntity<>(managerService.findAllClients(), HttpStatus.OK);
+    public ResponseEntity<List<AppUser>> getAllClients() {
+        return new ResponseEntity<>(appUserService.findAllByRole(Role.CLIENT), HttpStatus.OK);
     }
 
     @GetMapping("clients/{clientId}")
-    public ResponseEntity<Client> getClientById(@PathVariable UUID clientId) {
-        return new ResponseEntity<>(managerService.findClientById(clientId), HttpStatus.OK);
+    public ResponseEntity<AppUser> getClientById(@PathVariable String clientId) {
+        return new ResponseEntity<>(appUserService.findByIdAndRole(clientId, Role.CLIENT), HttpStatus.OK);
     }
 
     @PutMapping("clients/{clientId}")
-    public ResponseEntity<Client> updateClient(@PathVariable String clientId, @RequestBody UserDTO userDTO) {
-        return new ResponseEntity<>(managerService.updateClient(clientId, userDTO), HttpStatus.OK);
+    public ResponseEntity<AppUser> updateClient(@PathVariable String clientId, @RequestBody AppUserDTO userDTO) {
+        return new ResponseEntity<>(appUserService.update(clientId, userDTO), HttpStatus.OK);
     }
 
     @PutMapping("block_client/{clientId}")
     public void changeClientEnableStatus(@PathVariable String clientId) {
-        managerService.changeClientEnableStatus(clientId);
+        appUserService.changeUserEnableStatus(clientId);
     }
-
-
 
 
     @PostMapping("create_photo_session")
@@ -111,42 +103,5 @@ public class ManagerRestController {
     public ResponseEntity<List<PhotoSession>> getAllPhotoSessions() {
         return new ResponseEntity<>(managerService.findAllPhotoSessions(), HttpStatus.OK);
     }
-//
-//    @GetMapping("photo_sessions/{managerId}")
-//    public ResponseEntity<List<PhotoSession>> getAllPhotoSessionsByManagerId(@PathVariable UUID managerId) {
-//        return new ResponseEntity<>(managerService.findAllPhotoSessionsByManagerId(managerId), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("photo_sessions/{photographerId}")
-//    public ResponseEntity<List<PhotoSession>> getAllPhotoSessionsByPhotographerId(@PathVariable UUID photographerId) {
-//        return new ResponseEntity<>(managerService.findAllPhotoSessionsByPhotographerId(photographerId), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("photo_sessions/{clientId}")
-//    public ResponseEntity<List<PhotoSession>> getAllPhotoSessionsByClientId(@PathVariable UUID clientId) {
-//        return new ResponseEntity<>(managerService.findAllPhotoSessionsByClientId(clientId), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("photo_sessions/{photoSessionId}")
-//    public ResponseEntity<PhotoSession> getPhotoSessionById(@PathVariable UUID photoSessionId) {
-//        return new ResponseEntity<>(managerService.findPhotoSessionById(photoSessionId), HttpStatus.OK);
-//    }
-//
-//
-//    @GetMapping("photos")
-//    public ResponseEntity<List<Photo>> getAllPhoto() {
-//        return new ResponseEntity<>(managerService.findAllPhotos(), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("photos/{photoId}")
-//    public ResponseEntity<Photo> getPhotoById(@PathVariable UUID photoId) {
-//        return new ResponseEntity<>(managerService.findPhotoById(photoId), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("photos/{photoSessionId}")
-//    public ResponseEntity<List<Photo>> getAllPhotoByPhotoSessionId(@PathVariable UUID photoSessionId) {
-//        return new ResponseEntity<>(managerService.findAllPhotosByPhotoSessionsId(photoSessionId), HttpStatus.OK);
-//    }
-
 
 }

@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class ClientDTO extends UserDTO {
+public class ClientDTO extends AppUserDTO {
     @NotEmpty
     private String password;
 }
