@@ -4,8 +4,6 @@ import com.instacafe.moments.model.user.AppUser;
 import com.instacafe.moments.security.jwt.provider.JwtTokenProvider;
 import com.instacafe.moments.service.auth.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
-
-
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +21,13 @@ import java.util.UUID;
 @Slf4j
 public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
 
+    protected final long validityInMilliseconds;
     private final UserDetailsServiceImpl userDetailsService;
     @Value("${auth.header}")
     protected String authorizationHeader;
     @Value("${auth.header.prefix}")
     protected String authorizationHeaderPrefix;
     protected String secretKey;
-    protected final long validityInMilliseconds;
 
     public JwtTokenProviderImpl(UserDetailsServiceImpl userDetailsService,
                                 String secretKey,
@@ -66,12 +64,12 @@ public abstract class JwtTokenProviderImpl implements JwtTokenProvider {
 
     @Override
     public boolean validateToken(String token) {
-       try {
-                Jws<Claims> claimsJws = Jwts.parserBuilder()
-                        .setSigningKey(secretKey)
-                        .build()
-                        .parseClaimsJws(token);
-                return true;
+        try {
+            Jws<Claims> claimsJws = Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
         } catch (MalformedJwtException ex) {
             log.error("Invalid JWT token - {}", ex.getMessage());
         } catch (ExpiredJwtException ex) {

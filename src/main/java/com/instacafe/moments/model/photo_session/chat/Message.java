@@ -1,4 +1,4 @@
-package com.instacafe.moments.model.photo_session;
+package com.instacafe.moments.model.photo_session.chat;
 
 import com.instacafe.moments.model.AbstractEntity;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.UUID;
 
 @Getter

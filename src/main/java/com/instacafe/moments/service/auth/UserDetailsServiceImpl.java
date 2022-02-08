@@ -13,7 +13,6 @@ import com.instacafe.moments.repository.user.PhotographerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -48,15 +47,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Optional<Client> clientOptional = clientRepository.findByEmail(username);
         Optional<Photographer> photographerOptional = photographerRepository.findByEmail(username);
 
-        if(adminOptional.isPresent()){
+        if (adminOptional.isPresent()) {
             return adminOptional.get();
-        }else if(managerOptional.isPresent()){
+        } else if (managerOptional.isPresent()) {
             return managerOptional.get();
-        }else if(clientOptional.isPresent()){
+        } else if (clientOptional.isPresent()) {
             return clientOptional.get();
-        }else if(photographerOptional.isPresent()){
+        } else if (photographerOptional.isPresent()) {
             return photographerOptional.get();
-        }else {
+        } else {
             log.error("There is not User with this username: " + username);
             throw new UserNotFoundException("There is not User with this username: " + username);
         }
@@ -68,15 +67,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Optional<Client> clientOptional = clientRepository.findById(id);
         Optional<Photographer> photographerOptional = photographerRepository.findById(id);
 
-        if(adminOptional.isPresent()){
+        if (adminOptional.isPresent()) {
             return adminOptional.get();
-        }else if(managerOptional.isPresent()){
+        } else if (managerOptional.isPresent()) {
             return managerOptional.get();
-        }else if(clientOptional.isPresent()){
+        } else if (clientOptional.isPresent()) {
             return clientOptional.get();
-        }else if(photographerOptional.isPresent()){
+        } else if (photographerOptional.isPresent()) {
             return photographerOptional.get();
-        }else {
+        } else {
             log.error("There is not User with this id: " + id);
             throw new UserNotFoundException("There is not User with this id: " + id);
         }

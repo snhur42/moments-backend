@@ -1,6 +1,8 @@
 package com.instacafe.moments.rest;
 
+import com.instacafe.moments.dto.CurrentBriefQuestionsDTO;
 import com.instacafe.moments.dto.UserDTO;
+import com.instacafe.moments.model.photo_session.brief.CurrentBriefQuestions;
 import com.instacafe.moments.model.user.roles.Admin;
 import com.instacafe.moments.model.user.roles.Client;
 import com.instacafe.moments.model.user.roles.Manager;
@@ -9,6 +11,7 @@ import com.instacafe.moments.service.user.impl.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -98,6 +101,24 @@ public class AdminRestController {
     @PutMapping("block_client/{clientId}")
     public void changeClientEnableStatus(@PathVariable String clientId) {
         adminService.changeClientEnableStatus(clientId);
+    }
+
+    @GetMapping("get_brief_questions")
+    public ResponseEntity<CurrentBriefQuestions> getBriefQuestion() {
+        return new ResponseEntity<>(adminService.getBriefQuestion(), HttpStatus.OK);
+    }
+
+    @PostMapping("create_brief_questions")
+    public ResponseEntity<CurrentBriefQuestions> createBriefQuestion() {
+        return new ResponseEntity<>(adminService.createBriefQuestion(), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "update_brief_questions",
+                consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+                produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+    )
+    public ResponseEntity<CurrentBriefQuestions> updateBriefQuestion(@RequestBody CurrentBriefQuestionsDTO currentBriefQuestionsDTO) {
+        return new ResponseEntity<>(adminService.updateBriefQuestion(currentBriefQuestionsDTO), HttpStatus.OK);
     }
 
 //    @GetMapping("photo_sessions")

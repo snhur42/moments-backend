@@ -6,6 +6,9 @@ import com.instacafe.moments.model.enums.City;
 import com.instacafe.moments.model.enums.Duration;
 import com.instacafe.moments.model.enums.PhotoSessionStatus;
 import com.instacafe.moments.model.enums.PhotoSessionType;
+import com.instacafe.moments.model.photo_session.brief.Brief;
+import com.instacafe.moments.model.photo_session.certificate.Certificate;
+import com.instacafe.moments.model.photo_session.chat.Chat;
 import com.instacafe.moments.model.user.roles.Client;
 import com.instacafe.moments.model.user.roles.Manager;
 import com.instacafe.moments.model.user.roles.Photographer;
@@ -26,13 +29,6 @@ import java.util.List;
 @Entity(name = "PhotoSession")
 @Table(name = "photo_session")
 public class PhotoSession extends AbstractEntity {
-    @Column(name = "link_to_all_photos", unique = true, columnDefinition = "TEXT")
-    private String linkToAllPhotos;
-
-    @Column(name = "link_to_final_photos", unique = true, columnDefinition = "TEXT")
-    private String linkToFinalPhotos;
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "manager_id",
@@ -65,43 +61,61 @@ public class PhotoSession extends AbstractEntity {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(
-            name = "message_id",
+            name = "all_photos_id",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
-                    name = "message_id_fk"
+                    name = "all_photos_fk"
             )
     )
-    private List<Message> message;
+    private List<Photo> allPhoto;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "final_photos_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(
+                    name = "final_photos_fk"
+            )
+    )
+    private List<Photo> finalPhoto;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "photo_session_status", columnDefinition = "TEXT")
+    private PhotoSessionStatus photoSessionStatus;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
-            name = "brief_id",
+            name = "chat_id",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
-                    name = "brief_id_fk"
+                    name = "chat_id_fk"
             )
     )
-    private Brief brief;
-
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "duration")
-    private Duration duration;
-
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "city")
-    private City city;
+    private Chat chat;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "photo_session_type")
     private PhotoSessionType photoSessionType;
 
-    @JsonFormat(pattern = "yyyy-mm-dd HH:mm:ss")
-    @Column(updatable = false, nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDateTime willHappenAt;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "duration")
+    private Duration duration;
 
     @Positive(message = "price must be positive")
     @Column(name = "price", updatable = true, nullable = false, columnDefinition = "SMALLINT")
     private int price;
+
+    @Column(name = "location", updatable = true, nullable = true, columnDefinition = "TEXT")
+    private String location;
+
+    @JsonFormat(pattern = "yyyy-mm-dd HH:mm:ss")
+    @Column(updatable = false, nullable = false, columnDefinition = "TIMESTAMP")
+    private LocalDateTime willHappenAt;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "city")
+    private City city;
+
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(
@@ -113,8 +127,13 @@ public class PhotoSession extends AbstractEntity {
     )
     private Certificate certificate;
 
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "photo_session_status", columnDefinition = "TEXT")
-    private PhotoSessionStatus photoSessionStatus;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "brief_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(
+                    name = "brief_id_fk"
+            )
+    )
+    private Brief brief;
 }

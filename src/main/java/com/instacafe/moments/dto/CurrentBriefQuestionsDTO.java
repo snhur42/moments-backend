@@ -5,11 +5,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class ClientDTO extends UserDTO {
+public class CurrentBriefQuestionsDTO {
     @NotEmpty
-    private String password;
+    private String questions;
 }

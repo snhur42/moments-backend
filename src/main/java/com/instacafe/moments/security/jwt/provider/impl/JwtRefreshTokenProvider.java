@@ -10,8 +10,8 @@ public class JwtRefreshTokenProvider extends JwtTokenProviderImpl {
 
     @Autowired
     public JwtRefreshTokenProvider(UserDetailsServiceImpl userDetailsService,
-                                  @Value("${auth.jwt.secret.refresh.token}") String secretKey,
-                                  @Value("${auth.jwt.expiration.refresh.token}") long validityInMilliseconds) {
+                                   @Value("${auth.jwt.secret.refresh.token}") String secretKey,
+                                   @Value("${auth.jwt.expiration.refresh.token}") long validityInMilliseconds) {
         super(userDetailsService, secretKey, validityInMilliseconds);
     }
 }

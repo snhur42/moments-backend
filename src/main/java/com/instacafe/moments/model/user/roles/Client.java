@@ -11,7 +11,6 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity(name = "Client")
 @Table(name = "client",
         uniqueConstraints = {
@@ -20,13 +19,4 @@ import java.util.List;
         }
 )
 public class Client extends AppUser {
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "photo_sessions_client_id",
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(
-                    name = "photoSessions_client_id_fk"
-            )
-    )
-    private List<PhotoSession> photoSessions;
 }

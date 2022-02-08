@@ -24,13 +24,13 @@ public abstract class AppUserDetails extends AbstractEntity implements UserDetai
     @Enumerated(value = EnumType.STRING)
     @Column(name = "role")
     private Role role;
-    @Column(name = "account_non_expired", columnDefinition = "BOOLEAN")
+    @Column(name = "account_non_expired", columnDefinition = "BOOLEAN default TRUE")
     private boolean accountNonExpired;
-    @Column(name = "account_non_locked", columnDefinition = "BOOLEAN")
+    @Column(name = "account_non_locked", columnDefinition = "BOOLEAN default TRUE")
     private boolean accountNonLocked;
-    @Column(name = "credentials_non_expired", columnDefinition = "BOOLEAN")
+    @Column(name = "credentials_non_expired", columnDefinition = "BOOLEAN default TRUE")
     private boolean credentialsNonExpired;
-    @Column(name = "enabled", columnDefinition = "BOOLEAN")
+    @Column(name = "enabled", columnDefinition = "BOOLEAN default TRUE")
     private boolean enabled;
     @Column(name = "password", nullable = false, columnDefinition = "TEXT")
     private String password;

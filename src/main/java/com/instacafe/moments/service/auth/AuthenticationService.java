@@ -102,7 +102,7 @@ public class AuthenticationService {
         try {
             RefreshToken refreshToken = refreshTokenServiceImpl.findById(UUID.fromString(refreshTokenId));
 
-            if(jwtRefreshTokenProvider.IsExpired(refreshToken.getRefreshToken())){
+            if (jwtRefreshTokenProvider.IsExpired(refreshToken.getRefreshToken())) {
                 AppUser user = userDetailsService.loadUserByUserId(UUID.fromString(refreshToken.getUserId()));
 
                 String accessTokenString = jwtAccessTokenProvider.createToken(
@@ -138,13 +138,11 @@ public class AuthenticationService {
                         .ok()
                         .headers(responseHeaders)
                         .body(new AuthenticationResponse(true, accessTokenString));
-            }else {
+            } else {
                 return ResponseEntity
                         .ok()
                         .body(new AuthenticationResponse(false, null));
             }
-
-
 
 
         } catch (AuthenticationException e) {
@@ -152,7 +150,6 @@ public class AuthenticationService {
                     .ok()
                     .body(new AuthenticationResponse(false, null));
         }
-
 
 
     }
@@ -167,13 +164,13 @@ public class AuthenticationService {
                             logoutRequest.getFingerPrint()
                     )
             );
-        }catch (Exception err) {
+        } catch (Exception err) {
             log.error("logout error " + err.getMessage());
         }
 
     }
 
-    private void countRefreshTokens(String userId){
+    private void countRefreshTokens(String userId) {
         long countRefreshToken = refreshTokenServiceImpl.findAll().stream().filter(token -> token.getUserId().equals(userId)).count();
 
         if (countRefreshToken >= 4) {
@@ -181,7 +178,7 @@ public class AuthenticationService {
         }
     }
 
-    private RefreshToken saveRefreshToken(String userId, String refreshTokenString, String fingerPrint, Date expiredDate){
+    private RefreshToken saveRefreshToken(String userId, String refreshTokenString, String fingerPrint, Date expiredDate) {
         return refreshTokenServiceImpl.save(new RefreshToken(
                 userId,
                 refreshTokenString,

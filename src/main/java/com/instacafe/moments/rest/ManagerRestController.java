@@ -1,10 +1,17 @@
 package com.instacafe.moments.rest;
 
+import com.instacafe.moments.dto.CertificateNumberDTO;
+import com.instacafe.moments.dto.PhotoSessionDTO;
 import com.instacafe.moments.dto.UserDTO;
+import com.instacafe.moments.model.photo_session.PhotoSession;
+import com.instacafe.moments.model.photo_session.certificate.Certificate;
+import com.instacafe.moments.model.user.roles.Admin;
 import com.instacafe.moments.model.user.roles.Client;
+import com.instacafe.moments.model.user.roles.Manager;
 import com.instacafe.moments.model.user.roles.Photographer;
 import com.instacafe.moments.service.user.impl.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +30,25 @@ public class ManagerRestController {
         this.managerService = managerService;
     }
 
+    @GetMapping("managers/{managerId}")
+    public ResponseEntity<Manager> getAdminById(@PathVariable String managerId) {
+        return new ResponseEntity<>(managerService.findById(UUID.fromString(managerId)), HttpStatus.OK);
+    }
+
+    @GetMapping("get_all_certificates")
+    public ResponseEntity<List<Certificate>> getAllCertificate() {
+        return new ResponseEntity<>(managerService.findAllCertificate(), HttpStatus.OK);
+    }
+
+    @PostMapping("add_certificate")
+    public ResponseEntity<List<Certificate>> AddNewCertificate() {
+        return new ResponseEntity<>(managerService.addNewCertificate(), HttpStatus.OK);
+    }
+
+    @DeleteMapping("delete_certificate/{certificateId}")
+    public void deleteCertificate(@PathVariable String certificateId) {
+        managerService.deleteCertificate(certificateId);
+    }
 
 
     @GetMapping("photographers")
@@ -44,8 +70,6 @@ public class ManagerRestController {
     public void changePhotographerEnableStatus(@PathVariable String photographerId) {
         managerService.changePhotographerEnableStatus(photographerId);
     }
-
-
 
 
     @PostMapping("create_client")
@@ -74,22 +98,19 @@ public class ManagerRestController {
     }
 
 
-//
-//
-//    @PostMapping("create_photo_session")
-//    public ResponseEntity<PhotoSession> createPhotoSession(@Param("managerId") UUID managerId,
-//                                                           @RequestParam("clientId") UUID clientId,
-//                                                           @RequestParam("photographerId") UUID photographerId,
-//                                                           @RequestBody PhotoSession photoSession
-//    ) {
-//        return new ResponseEntity<>(managerService.savePhotoSession(managerId, clientId, photographerId, photoSession),
-//                HttpStatus.CREATED);
-//    }
-//
-//    @GetMapping("photo_sessions")
-//    public ResponseEntity<List<PhotoSession>> getAllPhotoSessions() {
-//        return new ResponseEntity<>(managerService.findAllPhotoSessions(), HttpStatus.OK);
-//    }
+
+
+    @PostMapping("create_photo_session")
+    public ResponseEntity<PhotoSession> createPhotoSession(@RequestBody PhotoSessionDTO photoSessionDTO
+    ) {
+        return new ResponseEntity<>(managerService.savePhotoSession(photoSessionDTO),
+                HttpStatus.CREATED);
+    }
+
+    @GetMapping("photo_sessions")
+    public ResponseEntity<List<PhotoSession>> getAllPhotoSessions() {
+        return new ResponseEntity<>(managerService.findAllPhotoSessions(), HttpStatus.OK);
+    }
 //
 //    @GetMapping("photo_sessions/{managerId}")
 //    public ResponseEntity<List<PhotoSession>> getAllPhotoSessionsByManagerId(@PathVariable UUID managerId) {

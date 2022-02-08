@@ -1,6 +1,7 @@
-package com.instacafe.moments.model.photo_session;
+package com.instacafe.moments.model.photo_session.brief;
 
 import com.instacafe.moments.model.AbstractEntity;
+import com.instacafe.moments.model.photo_session.PhotoSession;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

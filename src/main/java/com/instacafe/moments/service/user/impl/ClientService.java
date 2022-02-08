@@ -2,14 +2,14 @@ package com.instacafe.moments.service.user.impl;
 
 import com.instacafe.moments.dto.ClientDTO;
 import com.instacafe.moments.dto.UserDTO;
+import com.instacafe.moments.model.user.roles.Client;
 import com.instacafe.moments.repository.photo_session.PhotoSessionRepository;
+import com.instacafe.moments.repository.user.ClientRepository;
 import com.instacafe.moments.service.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.instacafe.moments.model.user.roles.Client;
-import com.instacafe.moments.repository.user.ClientRepository;
 
 import javax.transaction.Transactional;
 

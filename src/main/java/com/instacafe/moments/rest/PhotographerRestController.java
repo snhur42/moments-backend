@@ -1,13 +1,14 @@
 package com.instacafe.moments.rest;
 
-import com.instacafe.moments.model.user.roles.Admin;
 import com.instacafe.moments.model.user.roles.Photographer;
 import com.instacafe.moments.service.user.impl.PhotographerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -26,9 +27,14 @@ public class PhotographerRestController {
         return new ResponseEntity<>(photographerService.findById(UUID.fromString(photographerId)), HttpStatus.OK);
     }
 
-    @PostMapping("uploadFile")
-    public ResponseEntity<Photographer> uploadFile(@PathVariable String photographerId) {
-        return new ResponseEntity<>(photographerService.findById(UUID.fromString(photographerId)), HttpStatus.OK);
+    @PostMapping("/upload_photos")
+    public void uploadFiles(@RequestParam("data") MultipartFile... files) {
+        this.photographerService.savePhotos(files);
+    }
+
+    @GetMapping("/get_photos")
+    public ResponseEntity<List<String>> getFiles() {
+        return new ResponseEntity<>(this.photographerService.getPhotos(), HttpStatus.OK);
     }
 
 

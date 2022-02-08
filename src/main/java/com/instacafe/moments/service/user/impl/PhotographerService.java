@@ -1,29 +1,42 @@
 package com.instacafe.moments.service.user.impl;
 
 import com.instacafe.moments.dto.UserDTO;
+import com.instacafe.moments.model.photo_session.Photo;
+import com.instacafe.moments.model.user.roles.Photographer;
+import com.instacafe.moments.repository.photo_session.PhotoRepository;
 import com.instacafe.moments.repository.photo_session.PhotoSessionRepository;
+import com.instacafe.moments.repository.user.PhotographerRepository;
 import com.instacafe.moments.service.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.instacafe.moments.model.user.roles.Photographer;
-import com.instacafe.moments.repository.user.PhotographerRepository;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @Qualifier("photographerService")
 public class PhotographerService extends UserServiceImpl<Photographer, PhotographerRepository> {
     private final PhotoSessionRepository photoSessionRepository;
+    private final PhotoRepository photoRepository;
 
     @Autowired
     public PhotographerService(PhotographerRepository photographerRepository,
-                         PasswordEncoder passwordEncoder,
-                         PhotoSessionRepository photoSessionRepository) {
+                               PasswordEncoder passwordEncoder,
+                               PhotoRepository photoRepository,
+                               PhotoSessionRepository photoSessionRepository) {
         super(passwordEncoder, photographerRepository);
         this.photoSessionRepository = photoSessionRepository;
+        this.photoRepository = photoRepository;
 
     }
 
@@ -38,41 +51,31 @@ public class PhotographerService extends UserServiceImpl<Photographer, Photograp
         return this.updateUserFromUserDTO(photographerId, userDTO);
     }
 
+    public void savePhotos(MultipartFile... files) {
+        try {
+            String OUT_PATH = "/Users/vitaliiprovotar/IdeaProjects/moments-backend/src/main/webapp/WEB-INF/images/";
 
-//
-//    public List<PhotoSession> findAllPhotoSessions() {
-//        return photoSessionService.findAll();
-//    }
-//
-//    public PhotoSession findPhotoSessionById(UUID photoSessionId) {
-//        return photoSessionService.findById(photoSessionId);
-//    }
-//
-//    public PhotoSession updatePhotoSession(PhotoSession photoSession) {
-//        return photoSessionService.update(photoSession);
-//    }
-//
-//    public Photo createPhoto(Photo photo){
-//        return photoService.save(photo);
-//    }
-//
-//    public List<Photo> createPhotos(List<Photo> photos){
-//        return photoService.saveAll(photos);
-//    }
-//
-//    public List<Photo> findAllPhotos() {
-//        return photoService.findAll();
-//    }
-//
-//    public List<Photo> findAllPhotosByPhotoSessionsId(UUID photoSessionId) {
-//        return photoSessionService.findById(photoSessionId).getPhotos();
-//    }
-//
-//    public Photo findPhotoById(UUID photoId) {
-//        return photoService.findById(photoId);
-//    }
-//
-//    public Photo updatePhoto(Photo photo) {
-//        return photoService.update(photo);
-//    }
+            // read and write the file to the local folder
+            Arrays.asList(files).stream().forEach(file -> {
+                byte[] bytes = new byte[0];
+                try {
+                    bytes = file.getBytes();
+                    Path path = Paths.get(OUT_PATH + file.getOriginalFilename());
+                    Files.write(path, bytes);
+                    this.photoRepository.save(new Photo("http://localhost:8800/images/" + file.getOriginalFilename()));
+                } catch (IOException e) {
+
+                }
+            });
+
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public List<String> getPhotos() {
+        return this.photoRepository.findAll().stream().map(Photo::getPath).collect(Collectors.toList());
+    }
+
 }

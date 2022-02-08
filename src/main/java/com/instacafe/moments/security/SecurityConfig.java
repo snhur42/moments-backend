@@ -17,13 +17,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.List;
 
 
 @Configuration
@@ -63,6 +61,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/admin/create_admin").permitAll()
+//                .antMatchers("/api/admin/create_brief_questions").permitAll()
+//                .antMatchers("/api/admin/update_brief_questions").permitAll()
                 .antMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
                 .antMatchers("/api/manager/**").hasRole(Role.MANAGER.name())
                 .antMatchers("/api/photographer/**").hasRole(Role.PHOTOGRAPHER.name())

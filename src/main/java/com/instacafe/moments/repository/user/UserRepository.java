@@ -1,8 +1,8 @@
 package com.instacafe.moments.repository.user;
 
+import com.instacafe.moments.model.user.AppUser;
 import com.instacafe.moments.repository.EntityRepository;
 import org.springframework.data.repository.NoRepositoryBean;
-import com.instacafe.moments.model.user.AppUser;
 
 import java.util.Optional;
 

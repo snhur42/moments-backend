@@ -3,8 +3,6 @@ package com.instacafe.moments.security.jwt;
 import com.instacafe.moments.exception.controller.JwtAuthenticationException;
 import com.instacafe.moments.security.jwt.provider.impl.JwtAccessTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -33,7 +31,7 @@ public class JwtTokenFilter extends GenericFilterBean {
         String token = jwtAccessTokenProvider.resolveToken((HttpServletRequest) servletRequest);
 
         try {
-            if ( token != null && !token.isEmpty() && jwtAccessTokenProvider.validateToken(token)) {
+            if (token != null && !token.isEmpty() && jwtAccessTokenProvider.validateToken(token)) {
                 Authentication authentication = jwtAccessTokenProvider.getAuthentication(token);
 
                 if (authentication != null) {
