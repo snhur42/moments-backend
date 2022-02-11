@@ -1,6 +1,6 @@
 package com.instacafe.moments.service.user.impl;
 
-import com.instacafe.moments.dto.AppUserDTO;
+import com.instacafe.moments.dto.request.AppUserRequestDTO;
 import com.instacafe.moments.model.enums.Role;
 import com.instacafe.moments.model.user.AppUser;
 import com.instacafe.moments.repository.user.UserRepository;
@@ -28,18 +28,18 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public AppUser save(AppUserDTO appUserDTO) {
+    public AppUser save(AppUserRequestDTO appUserRequestDTO) {
         AppUser appUser = new AppUser();
 
-        appUser = this.parseAppUserFromAppUserDTO(appUserDTO, appUser);
+        appUser = this.parseAppUserFromAppUserDTO(appUserRequestDTO, appUser);
 
         return repository.save(appUser);
     }
 
     @Override
-    public AppUser update(String userId, AppUserDTO appUserDTO) {
+    public AppUser update(String userId, AppUserRequestDTO appUserRequestDTO) {
         AppUser appUser = repository.getById(UUID.fromString(userId));
-        appUser = this.parseAppUserFromAppUserDTO(appUserDTO, appUser);
+        appUser = this.parseAppUserFromAppUserDTO(appUserRequestDTO, appUser);
         return repository.save(appUser);
     }
 
@@ -78,7 +78,7 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
 
-    protected AppUser parseAppUserFromAppUserDTO(AppUserDTO userDTO, AppUser appUser) {
+    protected AppUser parseAppUserFromAppUserDTO(AppUserRequestDTO userDTO, AppUser appUser) {
         appUser.setFirstName(userDTO.getFirstName());
         appUser.setLastName(userDTO.getLastName());
         appUser.setEmail(userDTO.getEmail());

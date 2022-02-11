@@ -1,7 +1,7 @@
 package com.instacafe.moments.rest;
 
-import com.instacafe.moments.dto.AppUserDTO;
-import com.instacafe.moments.dto.CurrentBriefQuestionsDTO;
+import com.instacafe.moments.dto.request.AppUserRequestDTO;
+import com.instacafe.moments.dto.request.CurrentBriefQuestionsRequestDTO;
 import com.instacafe.moments.model.enums.Role;
 import com.instacafe.moments.model.photo_session.brief.CurrentBriefQuestions;
 import com.instacafe.moments.model.user.AppUser;
@@ -30,12 +30,12 @@ public class AdminRestController {
     }
 
     @PostMapping("create_user")
-    public ResponseEntity<AppUser> createUser(@RequestBody AppUserDTO userDTO) {
+    public ResponseEntity<AppUser> createUser(@RequestBody AppUserRequestDTO userDTO) {
         return new ResponseEntity<>(appUserService.save(userDTO), HttpStatus.CREATED);
     }
 
     @PostMapping("create_admin")
-    public ResponseEntity<AppUser> createAdmin(@RequestBody AppUserDTO userDTO) {
+    public ResponseEntity<AppUser> createAdmin(@RequestBody AppUserRequestDTO userDTO) {
         return new ResponseEntity<>(appUserService.save(userDTO), HttpStatus.CREATED);
     }
 
@@ -50,12 +50,12 @@ public class AdminRestController {
     }
 
     @PutMapping("update_admin/{adminId}")
-    public ResponseEntity<AppUser> updateAdmin(@PathVariable String adminId, @RequestBody AppUserDTO userDTO) {
+    public ResponseEntity<AppUser> updateAdmin(@PathVariable String adminId, @RequestBody AppUserRequestDTO userDTO) {
         return new ResponseEntity<>(appUserService.update(adminId, userDTO), HttpStatus.OK);
     }
 
     @PostMapping("create_manager")
-    public ResponseEntity<AppUser> createManager(@RequestBody AppUserDTO userDTO) {
+    public ResponseEntity<AppUser> createManager(@RequestBody AppUserRequestDTO userDTO) {
         return new ResponseEntity<>(appUserService.save(userDTO), HttpStatus.CREATED);
     }
 
@@ -65,7 +65,7 @@ public class AdminRestController {
     }
 
     @PutMapping("update_manager/{managerId}")
-    public ResponseEntity<AppUser> updateManager(@PathVariable String managerId, @RequestBody AppUserDTO userDTO) {
+    public ResponseEntity<AppUser> updateManager(@PathVariable String managerId, @RequestBody AppUserRequestDTO userDTO) {
         return new ResponseEntity<>(appUserService.update(managerId, userDTO), HttpStatus.OK);
     }
 
@@ -75,7 +75,7 @@ public class AdminRestController {
     }
 
     @PostMapping("create_photographer")
-    public ResponseEntity<AppUser> createPhotographer(@RequestBody AppUserDTO userDTO) {
+    public ResponseEntity<AppUser> createPhotographer(@RequestBody AppUserRequestDTO userDTO) {
         return new ResponseEntity<>(appUserService.save(userDTO), HttpStatus.CREATED);
     }
 
@@ -85,7 +85,7 @@ public class AdminRestController {
     }
 
     @PutMapping("update_photographer/{photographerId}")
-    public ResponseEntity<AppUser> updatePhotographer(@PathVariable String photographerId, @RequestBody AppUserDTO userDTO) {
+    public ResponseEntity<AppUser> updatePhotographer(@PathVariable String photographerId, @RequestBody AppUserRequestDTO userDTO) {
         return new ResponseEntity<>(appUserService.update(photographerId, userDTO), HttpStatus.OK);
     }
 
@@ -100,7 +100,7 @@ public class AdminRestController {
     }
 
     @PutMapping("admins/{clientId}")
-    public ResponseEntity<AppUser> updateClient(@PathVariable String clientId, @RequestBody AppUserDTO userDTO) {
+    public ResponseEntity<AppUser> updateClient(@PathVariable String clientId, @RequestBody AppUserRequestDTO userDTO) {
         return new ResponseEntity<>(appUserService.update(clientId, userDTO), HttpStatus.OK);
     }
 
@@ -123,7 +123,7 @@ public class AdminRestController {
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
     )
-    public ResponseEntity<CurrentBriefQuestions> updateBriefQuestion(@RequestBody CurrentBriefQuestionsDTO currentBriefQuestionsDTO) {
-        return new ResponseEntity<>(adminService.updateBriefQuestion(currentBriefQuestionsDTO), HttpStatus.OK);
+    public ResponseEntity<CurrentBriefQuestions> updateBriefQuestion(@RequestBody CurrentBriefQuestionsRequestDTO currentBriefQuestionsRequestDTO) {
+        return new ResponseEntity<>(adminService.updateBriefQuestion(currentBriefQuestionsRequestDTO), HttpStatus.OK);
     }
 }

@@ -1,8 +1,8 @@
 package com.instacafe.moments.service.auth;
 
-import com.instacafe.moments.dto.request.AuthenticationRequest;
-import com.instacafe.moments.dto.request.LogoutRequest;
-import com.instacafe.moments.dto.response.AuthenticationResponse;
+import com.instacafe.moments.dto.request.AuthenticationRequestDTO;
+import com.instacafe.moments.dto.request.LogoutRequestDTO;
+import com.instacafe.moments.dto.response.AuthenticationResponseDTO;
 import com.instacafe.moments.model.refresh_token.RefreshToken;
 import com.instacafe.moments.model.user.AppUser;
 import com.instacafe.moments.security.jwt.provider.impl.JwtAccessTokenProvider;
@@ -41,7 +41,7 @@ public record AuthenticationService(
     public AuthenticationService {
     }
 
-    public ResponseEntity<AuthenticationResponse> authenticate(HttpServletResponse response, AuthenticationRequest request) {
+    public ResponseEntity<AuthenticationResponseDTO> authenticate(HttpServletResponse response, AuthenticationRequestDTO request) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
@@ -79,19 +79,19 @@ public record AuthenticationService(
             return ResponseEntity
                     .ok()
                     .headers(responseHeaders)
-                    .body(new AuthenticationResponse(true, accessTokenString));
+                    .body(new AuthenticationResponseDTO(true, accessTokenString));
 
 
         } catch (AuthenticationException e) {
             log.error("Invalid email/password combination " + request.getEmail());
             return ResponseEntity
                     .ok()
-                    .body(new AuthenticationResponse(false, null));
+                    .body(new AuthenticationResponseDTO(false, null));
         }
     }
 
 
-    public ResponseEntity<AuthenticationResponse> refreshToken(String refreshTokenId, HttpServletResponse response) {
+    public ResponseEntity<AuthenticationResponseDTO> refreshToken(String refreshTokenId, HttpServletResponse response) {
         try {
             RefreshToken refreshToken = refreshTokenServiceImpl.findById(UUID.fromString(refreshTokenId));
 
@@ -130,31 +130,31 @@ public record AuthenticationService(
                 return ResponseEntity
                         .ok()
                         .headers(responseHeaders)
-                        .body(new AuthenticationResponse(true, accessTokenString));
+                        .body(new AuthenticationResponseDTO(true, accessTokenString));
             } else {
                 return ResponseEntity
                         .ok()
-                        .body(new AuthenticationResponse(false, null));
+                        .body(new AuthenticationResponseDTO(false, null));
             }
 
 
         } catch (AuthenticationException e) {
             return ResponseEntity
                     .ok()
-                    .body(new AuthenticationResponse(false, null));
+                    .body(new AuthenticationResponseDTO(false, null));
         }
 
 
     }
 
-    public void logout(HttpServletResponse response, HttpServletRequest request, LogoutRequest logoutRequest) {
+    public void logout(HttpServletResponse response, HttpServletRequest request, LogoutRequestDTO logoutRequestDTO) {
         SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
         securityContextLogoutHandler.logout(request, response, null);
         try {
             refreshTokenServiceImpl.delete(
                     refreshTokenServiceImpl.findByUserIdAndFingerPrint(
-                            logoutRequest.getUserId(),
-                            logoutRequest.getFingerPrint()
+                            logoutRequestDTO.getUserId(),
+                            logoutRequestDTO.getFingerPrint()
                     )
             );
         } catch (Exception err) {
