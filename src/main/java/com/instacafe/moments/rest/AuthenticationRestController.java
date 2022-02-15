@@ -30,6 +30,12 @@ public class AuthenticationRestController {
         this.appUserService = appUserService;
     }
 
+
+    @GetMapping("get_user/{userId}")
+    public ResponseEntity<AppUser> getUserById(@PathVariable String userId) {
+        return new ResponseEntity<>(appUserService.findById(userId), HttpStatus.OK);
+    }
+
     @PostMapping("login")
     public ResponseEntity<AuthenticationResponseDTO> authenticate(HttpServletResponse response, @RequestBody AuthenticationRequestDTO request) {
         log.info("Login: " + request.getEmail());

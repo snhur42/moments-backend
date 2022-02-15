@@ -38,7 +38,6 @@ public class AppUserDetailsServiceImpl implements UserDetailsService {
 
 
     public AppUser loadUserById(String appUserId) throws UsernameNotFoundException {
-
         Optional<AppUser> appUser = repository.findById(UUID.fromString(appUserId));
 
         if (appUser.isPresent()) {

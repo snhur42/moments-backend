@@ -44,11 +44,6 @@ public class AdminRestController {
         return new ResponseEntity<>(appUserService.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("admins/{adminId}")
-    public ResponseEntity<AppUser> getAdminById(@PathVariable String adminId) {
-        return new ResponseEntity<>(appUserService.findById(adminId), HttpStatus.OK);
-    }
-
     @PutMapping("update_admin/{adminId}")
     public ResponseEntity<AppUser> updateAdmin(@PathVariable String adminId, @RequestBody AppUserRequestDTO userDTO) {
         return new ResponseEntity<>(appUserService.update(adminId, userDTO), HttpStatus.OK);
