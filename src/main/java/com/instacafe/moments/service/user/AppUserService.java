@@ -7,7 +7,7 @@ import com.instacafe.moments.model.user.AppUser;
 import java.util.List;
 
 public interface AppUserService {
-    AppUser save(AppUserRequestDTO appUserRequestDTO);
+    boolean save(AppUserRequestDTO appUserRequestDTO);
 
     AppUser update(String appUserId, AppUserRequestDTO appUserRequestDTO);
 

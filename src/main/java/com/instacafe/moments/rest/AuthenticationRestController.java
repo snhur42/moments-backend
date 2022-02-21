@@ -4,7 +4,9 @@ package com.instacafe.moments.rest;
 import com.instacafe.moments.dto.request.AuthenticationRequestDTO;
 import com.instacafe.moments.dto.request.ClientRequestDTO;
 import com.instacafe.moments.dto.request.LogoutRequestDTO;
-import com.instacafe.moments.dto.response.AuthenticationResponseDTO;
+import com.instacafe.moments.dto.request.ResetPasswordRequestDTO;
+import com.instacafe.moments.dto.response.AuthAccessJwtResponseDTO;
+import com.instacafe.moments.dto.response.AuthRefreshJwtResponseDTO;
 import com.instacafe.moments.model.user.AppUser;
 import com.instacafe.moments.service.auth.AuthenticationService;
 import com.instacafe.moments.service.user.impl.AppUserServiceImpl;
@@ -37,13 +39,13 @@ public class AuthenticationRestController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<AuthenticationResponseDTO> authenticate(HttpServletResponse response, @RequestBody AuthenticationRequestDTO request) {
+    public ResponseEntity<AuthAccessJwtResponseDTO> authenticate(HttpServletResponse response, @RequestBody AuthenticationRequestDTO request) {
         log.info("Login: " + request.getEmail());
         return authenticationService.authenticate(response, request);
     }
 
     @PostMapping("refresh_token")
-    public ResponseEntity<AuthenticationResponseDTO> updateRefreshToken(@CookieValue(name = "refreshToken", defaultValue = "No cookies") String refreshToken, HttpServletResponse response) {
+    public ResponseEntity<AuthRefreshJwtResponseDTO> updateRefreshToken(@CookieValue(name = "refreshToken", defaultValue = "No cookies") String refreshToken, HttpServletResponse response) {
         return authenticationService.refreshToken(refreshToken, response);
     }
 
@@ -56,7 +58,14 @@ public class AuthenticationRestController {
 
 
     @PostMapping("create_client")
-    public ResponseEntity<AppUser> createClient(@RequestBody ClientRequestDTO clientDTO) {
+    public ResponseEntity<Boolean> createClient(@RequestBody ClientRequestDTO clientDTO) {
         return new ResponseEntity<>(appUserService.save(clientDTO), HttpStatus.CREATED);
+    }
+
+
+    @PostMapping("reset_password")
+    public ResponseEntity<Boolean> resetPassword(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO) {
+        log.info("Reset password for " + resetPasswordRequestDTO.getEmail());
+        return new ResponseEntity<>(appUserService.resetUserPassword(resetPasswordRequestDTO.getEmail()), HttpStatus.CREATED);
     }
 }

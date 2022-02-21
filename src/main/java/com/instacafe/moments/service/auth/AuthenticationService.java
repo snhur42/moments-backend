@@ -1,8 +1,10 @@
 package com.instacafe.moments.service.auth;
 
+import com.instacafe.moments.dto.AppUserDTO;
 import com.instacafe.moments.dto.request.AuthenticationRequestDTO;
 import com.instacafe.moments.dto.request.LogoutRequestDTO;
-import com.instacafe.moments.dto.response.AuthenticationResponseDTO;
+import com.instacafe.moments.dto.response.AuthAccessJwtResponseDTO;
+import com.instacafe.moments.dto.response.AuthRefreshJwtResponseDTO;
 import com.instacafe.moments.model.refresh_token.RefreshToken;
 import com.instacafe.moments.model.user.AppUser;
 import com.instacafe.moments.security.jwt.provider.impl.JwtAccessTokenProvider;
@@ -41,7 +43,7 @@ public record AuthenticationService(
     public AuthenticationService {
     }
 
-    public ResponseEntity<AuthenticationResponseDTO> authenticate(HttpServletResponse response, AuthenticationRequestDTO request) {
+    public ResponseEntity<AuthAccessJwtResponseDTO> authenticate(HttpServletResponse response, AuthenticationRequestDTO request) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
@@ -79,19 +81,29 @@ public record AuthenticationService(
             return ResponseEntity
                     .ok()
                     .headers(responseHeaders)
-                    .body(new AuthenticationResponseDTO(true, accessTokenString));
+                    .body(new AuthAccessJwtResponseDTO(true, accessTokenString, new AppUserDTO(
+                            user.getId().toString(),
+                            user.getCreated(),
+                            user.getModified(),
+                            user.getFirstName(),
+                            user.getLastName(),
+                            user.getPhone(),
+                            user.getEmail(),
+                            user.getRole(),
+                            user.getCity()
+                    )));
 
 
         } catch (AuthenticationException e) {
             log.error("Invalid email/password combination " + request.getEmail());
             return ResponseEntity
                     .ok()
-                    .body(new AuthenticationResponseDTO(false, null));
+                    .body(new AuthAccessJwtResponseDTO(false, null, null));
         }
     }
 
 
-    public ResponseEntity<AuthenticationResponseDTO> refreshToken(String refreshTokenId, HttpServletResponse response) {
+    public ResponseEntity<AuthRefreshJwtResponseDTO> refreshToken(String refreshTokenId, HttpServletResponse response) {
         try {
             RefreshToken refreshToken = refreshTokenServiceImpl.findById(UUID.fromString(refreshTokenId));
 
@@ -130,18 +142,18 @@ public record AuthenticationService(
                 return ResponseEntity
                         .ok()
                         .headers(responseHeaders)
-                        .body(new AuthenticationResponseDTO(true, accessTokenString));
+                        .body(new AuthRefreshJwtResponseDTO(true, accessTokenString));
             } else {
                 return ResponseEntity
                         .ok()
-                        .body(new AuthenticationResponseDTO(false, null));
+                        .body(new AuthRefreshJwtResponseDTO(false, null));
             }
 
 
         } catch (AuthenticationException e) {
             return ResponseEntity
                     .ok()
-                    .body(new AuthenticationResponseDTO(false, null));
+                    .body(new AuthRefreshJwtResponseDTO(false, null));
         }
 
 

@@ -30,12 +30,7 @@ public class AdminRestController {
     }
 
     @PostMapping("create_user")
-    public ResponseEntity<AppUser> createUser(@RequestBody AppUserRequestDTO userDTO) {
-        return new ResponseEntity<>(appUserService.save(userDTO), HttpStatus.CREATED);
-    }
-
-    @PostMapping("create_admin")
-    public ResponseEntity<AppUser> createAdmin(@RequestBody AppUserRequestDTO userDTO) {
+    public ResponseEntity<Boolean> createUser(@RequestBody AppUserRequestDTO userDTO) {
         return new ResponseEntity<>(appUserService.save(userDTO), HttpStatus.CREATED);
     }
 
@@ -47,11 +42,6 @@ public class AdminRestController {
     @PutMapping("update_admin/{adminId}")
     public ResponseEntity<AppUser> updateAdmin(@PathVariable String adminId, @RequestBody AppUserRequestDTO userDTO) {
         return new ResponseEntity<>(appUserService.update(adminId, userDTO), HttpStatus.OK);
-    }
-
-    @PostMapping("create_manager")
-    public ResponseEntity<AppUser> createManager(@RequestBody AppUserRequestDTO userDTO) {
-        return new ResponseEntity<>(appUserService.save(userDTO), HttpStatus.CREATED);
     }
 
     @GetMapping("managers")
@@ -67,11 +57,6 @@ public class AdminRestController {
     @PutMapping("block_manager/{managerId}")
     public void changeManagerEnableStatus(@PathVariable String managerId) {
         appUserService.changeUserEnableStatus(managerId);
-    }
-
-    @PostMapping("create_photographer")
-    public ResponseEntity<AppUser> createPhotographer(@RequestBody AppUserRequestDTO userDTO) {
-        return new ResponseEntity<>(appUserService.save(userDTO), HttpStatus.CREATED);
     }
 
     @GetMapping("photographers")
